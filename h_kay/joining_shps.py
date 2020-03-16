@@ -6,11 +6,10 @@ Created on Mon Jan 20 16:39:32 2020
 @author: heatherkay
 """
 
-import rsgislib.vectorutils
-import math
 import glob
 import os.path
 from multiprocessing import Pool
+import geopandas
 
 def gla14_join(filein, folderout, folderno):
     """
@@ -61,7 +60,7 @@ def gla14_join(filein, folderout, folderno):
 
 def shp_join(filein, folderout, folderin):
     """
-    Function to join a shapefile to the gla14 data. Must be run for folderno from 1-10
+    Function to join a shapefile to another shape file (within).
     
     Parameters
     ----------
@@ -107,4 +106,28 @@ def shp_join(filein, folderout, folderin):
     p = Pool(ncores)
     p.map(run_join, params)
 
-
+def ez_join(filein, folderout, folderin):
+    """
+    Function to join a shapefile to another shape file (within).
+    
+    Parameters
+    ----------
+    filein: string
+          Filepath for shp file to join with other shape files (folderin)
+          
+    folderout: string
+             Filepath for folder to contain joined files
+             
+    folderin: string
+            Filepath for shp files to join with other shape file (filein)        
+    """
+    files = glob.glob(folderin + '*.shp')
+    for file in files:
+        filename = os.path.splitext(os.path.basename(file))[0]
+        base_gpd_df = geopandas.read_file(file)
+        join_gpg_df = geopandas.read_file(filein)
+    
+        join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
+        join_gpg_df.to_file(folderout, "{}_join.shp".format(filename))
+        
+        
