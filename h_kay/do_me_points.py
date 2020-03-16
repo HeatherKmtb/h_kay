@@ -24,7 +24,7 @@ ogr.UseExceptions()
 
 
 
-def getshit(inShape, inRas, field='id'):
+def getshit(inFolder, inRas, field='id'):
     """
     Collect training as an np array for use with create model function
     
