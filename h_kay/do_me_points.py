@@ -31,10 +31,10 @@ def getshit(inFolder, inRas, field='id'):
     Parameters
     --------------
         
-    inShape : string
+    inFolder : string
               the input point shapefile of gla14 data
+              load before hand with glob.glob(string)
              
-        
     inRas : string
             the input raster 
         
@@ -87,14 +87,14 @@ def getshit(inFolder, inRas, field='id'):
             # Get raster georeference info
         
             mx,my =geom.GetX(), geom.GetY()
+            
+            px = int((mx - rgt[0]) / rgt[1]) #x pixel
+            py = int((my - rgt[3]) / rgt[5])
         
-            px = abs(int((mx + rgt[0]) / rgt[1])) #x pixel
-            py = abs(int((my + rgt[3]) / rgt[5]))
-        
-            if px == rb.XSize:
-                px = px-1
-                if py == rb.YSize:
-                    py = py-1
+            if px >= rb.XSize:
+                px = rb.XSize-1
+            if py >= rb.YSize:
+                py = rb.YSize-1
         
             outVal = inArray[py, px]
         
