@@ -106,7 +106,7 @@ def rmv_cat(folderin, folderout, column='b1', cat=['0.0', '190.0','200.0','202.0
              filepath for folder where output shapefiles will be saved
              
     column: string
-          column from sahpefile with categories for removal.
+          column from shapefile with categories for removal.
           Default = 'b1'
           
     cat: list of strings
@@ -138,7 +138,7 @@ def join_per_grid(folderin, folderout):
     grid_nos = np.arange(0,2500,1) 
 
     for no in grid_nos:
-        fileList = glob.glob(folderin + '*_eco_{}.shp'.format(no))
+        fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(no))
         rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(no))
 
       

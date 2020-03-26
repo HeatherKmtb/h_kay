@@ -34,6 +34,7 @@ def getshit(inFolder, inRas, field='id'):
     inFolder : string
               the input point shapefile of gla14 data
               load before hand with glob.glob(string)
+              for example inFolder = glob.glob('/Users/heather/phd/test/*.shp')
              
     inRas : string
             the input raster 
