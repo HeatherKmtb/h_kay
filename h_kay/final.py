@@ -471,6 +471,7 @@ def biomes(folderin, fileout, folderout, naming='gla14_eco_'):
         if final.empty:
             continue
         del a, b, x, y, test2, test2a, test3
+        
     
         #NEXT STEP. Bin remaining data in order to get mean and IQR of each bin
 
@@ -655,7 +656,10 @@ def grid(folderin, fileout, folderout, naming='gla14_grid_'):
         if final.empty:
             continue
         del a, b, x, y, test2, test2a, test3
-    
+
+        if footprints < 50:
+            continue
+        
         #NEXT STEP. Bin remaining data in order to get mean and IQR of each bin
 
         #add column with bins 
