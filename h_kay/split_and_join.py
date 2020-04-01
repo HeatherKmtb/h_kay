@@ -24,7 +24,8 @@ import rsgislib.vectorutils
 import math
 
 
-def split_per(folderin, folderout, split_col='ECO_ID', colNms=['i_h100','i_cd','doy','i_wflen','i_acqdate','b1','vcf','ECO_NAME','ECO_ID','BIOME','geometry']):
+def split_per(folderin, folderout, split_col='ECO_ID', colNms=['i_h100','i_cd',
+    'doy','i_wflen','i_acqdate','b1','vcf','ECO_NAME','ECO_ID','BIOME','geometry']):
     """
     Function which will divide shapefiles by individual elements in one column to generate new shapefiles 
     with filename referring to element in column (e.g split data by ecoregion and give each new file ecoregion number)
@@ -122,7 +123,7 @@ def rmv_cat(folderin, folderout, column='b1', cat=['0.0', '190.0','200.0','202.0
             continue
         new.to_file(folderout + '{}.shp'.format(basename))
         
-def join_per_grid(folderin, folderout):
+def join_per_grid(folderin, folderout, rng=(0,2500,1)):
     """
     Function to regroup files that have been split with spilt_per function on 
     grid numbers as range from 1 to 2500
@@ -135,7 +136,7 @@ def join_per_grid(folderin, folderout):
     folderout: string
              filepath for folder where output shapefiles will be saved 
     """
-    grid_nos = np.arange(0,2500,1) 
+    grid_nos = np.arange(rng) 
 
     for no in grid_nos:
         fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(no))
