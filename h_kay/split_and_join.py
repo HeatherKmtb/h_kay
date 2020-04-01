@@ -161,5 +161,7 @@ def join_per_grid_test(folderin, folderout, grid_nos):
  
     for no in grid_nos:
         fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(no))
+        if len(fileList)==0:
+            continue
         rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(no))
       
