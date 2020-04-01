@@ -67,8 +67,8 @@ def getshit(inFolder, inRas, field='id'):
         rb = raster.GetRasterBand(1)
         rgt = raster.GetGeoTransform()
     
-        mem_drv = ogr.GetDriverByName('Memory')
-        driver = gdal.GetDriverByName('MEM')  
+        #mem_drv = ogr.GetDriverByName('Memory')
+        #driver = gdal.GetDriverByName('MEM')  
     
         lyr.CreateField(ogr.FieldDefn('Grid', ogr.OFTInteger))
         rejects = []

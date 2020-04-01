@@ -123,7 +123,7 @@ def rmv_cat(folderin, folderout, column='b1', cat=['0.0', '190.0','200.0','202.0
             continue
         new.to_file(folderout + '{}.shp'.format(basename))
         
-def join_per_grid(folderin, folderout, rngmx = 2500):
+def join_per_grid(folderin, folderout, rngmn = 0, rngmx = 2500):
     """
     Function to regroup files that have been split with spilt_per function on 
     grid numbers as range from 1 to 2500
@@ -136,10 +136,30 @@ def join_per_grid(folderin, folderout, rngmx = 2500):
     folderout: string
              filepath for folder where output shapefiles will be saved 
     """
-    grid_nos = np.arange(0, rngmx, 1) 
+    grid_nos = np.arange(rngmn, rngmx, 1) 
 
     for no in grid_nos:
         fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(no))
         rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(no))
 
+def join_per_grid_test(folderin, folderout, grid_nos):
+    """
+    Function to regroup files that have been split with spilt_per function on 
+    grid numbers as range from 1 to 2500
+    
+    Parameters
+    ----------
+    folderin: string
+            filepath for folder containing shapefiles to be joined
+            
+    folderout: string
+             filepath for folder where output shapefiles will be saved 
+             
+    grid_nos: range
+            type grid_nos = np.arange(min, max, step)          
+    """
+ 
+    for no in grid_nos:
+        fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(no))
+        rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(no))
       
