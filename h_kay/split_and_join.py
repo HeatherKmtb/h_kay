@@ -186,7 +186,7 @@ def join_per_grid_parallel(folderin, folderout):
             type grid_nos = np.arange(min, max, step)          
     """
  
-    rge = np.arange(1,500,1)
+    rge = np.arange(1000,56001,1)
     
     def merge(i, folderin, folderout):
         fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(i))
