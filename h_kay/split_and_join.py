@@ -22,6 +22,7 @@ import geopandas as gpd
 from multiprocessing import Pool
 import rsgislib.vectorutils
 import math
+from joblib import Parallel, delayed
 
 
 def split_per(folderin, folderout, split_col='ECO_ID', colNms=['i_h100','i_cd',
@@ -167,3 +168,29 @@ def join_per_grid_test(folderin, folderout, grid_nos):
             continue
         rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(no))
       
+
+def join_per_grid_parallel(folderin, folderout):
+    """
+    Function to regroup files that have been split with spilt_per function on 
+    grid numbers as range from 1 to 2500
+    
+    Parameters
+    ----------
+    folderin: string
+            filepath for folder containing shapefiles to be joined
+            
+    folderout: string
+             filepath for folder where output shapefiles will be saved 
+             
+    grid_nos: range
+            type grid_nos = np.arange(min, max, step)          
+    """
+ 
+    rge = np.arange(1,56001,1)
+    
+    def merge(i, folderin, folderout):
+        fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(i))
+        rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(i))
+    
+    Parallel(n_jobs=50)(delayed(merge)(i, folderin, folderout) for i in rge)
+    
