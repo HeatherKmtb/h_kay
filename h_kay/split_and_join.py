@@ -186,11 +186,14 @@ def join_per_grid_parallel(folderin, folderout):
             type grid_nos = np.arange(min, max, step)          
     """
  
-    rge = np.arange(48245,48250,1)
+    rge = np.arange(1,500,1)
     
     def merge(i, folderin, folderout):
         fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(i))
-        rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(i))
+        if len(fileList)==0:
+            print(i)
+        else: 
+            rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(i))
     
     Parallel(n_jobs=50)(delayed(merge)(i, folderin, folderout) for i in rge)
     
