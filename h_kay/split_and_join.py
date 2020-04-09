@@ -123,30 +123,12 @@ def rmv_cat(folderin, folderout, column='b1', cat=['0.0', '190.0','200.0','202.0
         if new.empty:
             continue
         new.to_file(folderout + '{}.shp'.format(basename))
-        
-def join_per_grid(folderin, folderout, rngmn = 0, rngmx = 2500):
+             
+
+def join_per_grid_parallel(folderin, folderout, rngmn = 0, rngmx = 56001):
     """
     Function to regroup files that have been split with spilt_per function on 
-    grid numbers as range from 1 to 2500
-    
-    Parameters
-    ----------
-    folderin: string
-            filepath for folder containing shapefiles to be joined
-            
-    folderout: string
-             filepath for folder where output shapefiles will be saved 
-    """
-    grid_nos = np.arange(rngmn, rngmx, 1) 
-
-    for no in grid_nos:
-        fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(no))
-        rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(no))
-
-def join_per_grid_test(folderin, folderout, grid_nos):
-    """
-    Function to regroup files that have been split with spilt_per function on 
-    grid numbers as range from 1 to 2500
+    grid numbers using a range 
     
     Parameters
     ----------
@@ -156,37 +138,16 @@ def join_per_grid_test(folderin, folderout, grid_nos):
     folderout: string
              filepath for folder where output shapefiles will be saved 
              
-    grid_nos: range
-            type grid_nos = np.arange(min, max, step)          
-    """
- 
-    for no in grid_nos:
-        print(no)
-        fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(no))
-        if len(fileList)==0:
-            print(no)
-            continue
-        rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(no))
-      
-
-def join_per_grid_parallel(folderin, folderout):
-    """
-    Function to regroup files that have been split with spilt_per function on 
-    grid numbers as range from 1 to 2500
-    
-    Parameters
-    ----------
-    folderin: string
-            filepath for folder containing shapefiles to be joined
+    rngmn: int
+            minimum range value for grid square numbers 
+            Default = 0
             
-    folderout: string
-             filepath for folder where output shapefiles will be saved 
-             
-    grid_nos: range
-            type grid_nos = np.arange(min, max, step)          
+    rngmx: int
+            maximum range value for grid square numbers
+            Default = 56001 (equivalent to 1 degree grid)
     """
  
-    rge = np.arange(1000,56001,1)
+    rge = np.arange(rngmn, rngmx,1)
     
     def merge(i, folderin, folderout):
         fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(i))

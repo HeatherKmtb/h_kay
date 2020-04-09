@@ -1,26 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jan 31 10:10:52 2020
-
-@author: heatherkay
-"""
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Dec 19 10:44:37 2019
-
-@author: heatherkay
-"""
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 21 16:04:46 2019
-
-@author: heatherkay
-"""
 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -70,6 +47,7 @@ def ecoregions(folderin, fileout, naming='gla14_eco_'):
         hd, tl = path.split(file)
         name = tl.replace(naming, "")
         name = name.replace('.shp', "")
+        print(name)
         q_values = pd.DataFrame(columns=['q'])
     
         for i in range(100):
