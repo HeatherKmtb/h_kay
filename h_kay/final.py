@@ -599,7 +599,7 @@ def biomes(folderin, fileout, folderout, naming='gla14_eco_'):
         plt.close
 
 
-def grid(folderin, fileout, folderout, naming='3'):
+def grid(folderin, fileout, folderout, naming=3):
     """
     Function to compute q and provide results (csv) and figures (pdf)
     
@@ -609,7 +609,7 @@ def grid(folderin, fileout, folderout, naming='3'):
     folderin: string
             Filepath for folder with files ready for analysis
                 
-    naming: string
+    naming: int
           Section of filename to obtain ID (here grid number). Obtained
           by splitting filename by '_' and indexing
           Default = '3'
@@ -630,11 +630,14 @@ def grid(folderin, fileout, folderout, naming='3'):
 
     for file in fileList:
         df = gpd.read_file(file)
+        if df.empty:
+            Continue 
         hd, tl = path.split(file)
         shp_lyr_name = path.splitext(tl)[0]
         name_comp = shp_lyr_name.split('_')
         name = name_comp[naming] 
         eco = df['ECO_ID'][1]
+        print(name)
         #remove data with H_100 >= 0 prior to logging
         test2 = df[df['i_h100']>=0] 
         footprints = len(df['i_h100'])
