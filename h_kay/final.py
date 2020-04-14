@@ -599,7 +599,7 @@ def biomes(folderin, fileout, folderout, naming='gla14_eco_'):
         plt.close
 
 
-def grid(folderin, fileout, folderout, naming=3):
+def grid(folderin, fileout, folderout, naming=3, eco_loc=2):
     """
     Function to compute q and provide results (csv) and figures (pdf)
     
@@ -612,7 +612,12 @@ def grid(folderin, fileout, folderout, naming=3):
     naming: int
           Section of filename to obtain ID (here grid number). Obtained
           by splitting filename by '_' and indexing
-          Default = '3'
+          Default = 3
+
+    eco_loc: int
+          Section of filename to obtain ecoregion (if applicable). 
+          Obtained as with naming
+          Default = 2
           
     fileout: string
            Filepath for results file ending '.csv'
@@ -636,7 +641,7 @@ def grid(folderin, fileout, folderout, naming=3):
         shp_lyr_name = path.splitext(tl)[0]
         name_comp = shp_lyr_name.split('_')
         name = name_comp[naming] 
-        eco = df['ECO_ID'][1]
+        eco = name_comp[eco_loc]
         print(name)
         #remove data with H_100 >= 0 prior to logging
         test2 = df[df['i_h100']>=0] 
