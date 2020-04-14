@@ -632,6 +632,7 @@ def grid(folderin, fileout, folderout, naming='gla14_grid_'):
         hd, tl = path.split(file)
         name = tl.replace(naming, "")
         name = name.replace('.shp', "")
+        eco = df['ECO_ID']
         #remove data with H_100 >= 0 prior to logging
         test2 = df[df['i_h100']>=0] 
         footprints = len(df['i_h100'])
@@ -750,7 +751,7 @@ def grid(folderin, fileout, folderout, naming='gla14_grid_'):
         #plt.close
         
         #extract info: eco, qout, r_sq, deg_free (only gets one eco in data)
-        resultsa = resultsa.append({'ID': name, 'qout': qout, 'r_sq': r_sq, 'deg_free': footprints, 'rmse': rms, 'r_sq_mean': r_sq_mean}, ignore_index=True)
+        resultsa = resultsa.append({'eco': eco, 'ID': name, 'qout': qout, 'r_sq': r_sq, 'deg_free': footprints, 'rmse': rms, 'r_sq_mean': r_sq_mean}, ignore_index=True)
         #if deg_free>=60:
             #resultsb = resultsb.append({'eco': name2, 'ID': name, 'qout': qout, 'r_sq': r_sq, 'deg_free': deg_free, 'rmse': rms}, ignore_index=True)        
             #export to excel
