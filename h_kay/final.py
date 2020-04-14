@@ -631,10 +631,10 @@ def grid(folderin, fileout, folderout, naming='3'):
     for file in fileList:
         df = gpd.read_file(file)
         hd, tl = path.split(file)
-        name_comp = tl.replace('.shp', "")
-        name_comp = name_comp.split('_')
+        shp_lyr_name = path.splitext(tl)[0]
+        name_comp = shp_lyr_name.split('_')
         name = name_comp[naming] 
-        eco = df['ECO_ID']
+        eco = df['ECO_ID'][1]
         #remove data with H_100 >= 0 prior to logging
         test2 = df[df['i_h100']>=0] 
         footprints = len(df['i_h100'])
