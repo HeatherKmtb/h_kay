@@ -101,4 +101,4 @@ def ecoregions(folderin, fileout, naming=3, eco_loc=2):
             #df2 = smpl(df, stratify=df['h_100'])
         q_samples.to_csv(fileout)   
             #means x is just the h100 data - needs logging to normalise (not skewed) 
-    Parallel(njobs=50)(delayed(get_se)(f,folderin, fileout, naming=3, eco_loc=2)for f in fileList)
+    Parallel(n_jobs=50)(delayed(get_se)(f,folderin, fileout, naming=3, eco_loc=2)for f in fileList)
