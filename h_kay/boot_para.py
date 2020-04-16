@@ -43,7 +43,7 @@ def ecoregions(folderin, fileout, naming=3, eco_loc=2):
 
 
     fileList = glob.glob(folderin + '*.shp')
-    q_samples = pd.DataFrame(columns=['ID', 'mean_q', 'sd_q', 'SE'])
+    q_samples = pd.DataFrame(columns=['eco','ID', 'mean_q', 'sd_q', 'SE'])
     
     def get_se(f,folderin, fileout, q_samples, naming=3, eco_loc=2):
         df2 = gpd.read_file(f)
@@ -96,7 +96,7 @@ def ecoregions(folderin, fileout, naming=3, eco_loc=2):
         mean_q = q_values['q'].mean()
         sd_q = q_values['q'].std()
         SE = sd_q/10
-        q_samples = q_samples.append({'ID':name, 'mean_q':mean_q, 'sd_q':sd_q, 'SE':SE}, ignore_index=True)
+        q_samples = q_samples.append({'eco':eco, 'ID':name, 'mean_q':mean_q, 'sd_q':sd_q, 'SE':SE}, ignore_index=True)
         del mean_q, sd_q, q_values   
             #df2 = smpl(df, stratify=df['h_100'])
     q_samples.to_csv(fileout)   
