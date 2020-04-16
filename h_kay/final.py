@@ -636,7 +636,7 @@ def grid(folderin, fileout, folderout, naming=3, eco_loc=2):
     for file in fileList:
         df = gpd.read_file(file)
         if df.empty:
-            Continue 
+            continue 
         hd, tl = path.split(file)
         shp_lyr_name = path.splitext(tl)[0]
         name_comp = shp_lyr_name.split('_')
