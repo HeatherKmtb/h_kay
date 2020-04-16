@@ -17,7 +17,7 @@ from os import path
 from sklearn.utils import resample as smpl
 from joblib import Parallel, delayed
 
-def ecoregions(folderin, fileout, q_samples, naming=3, eco_loc=2):
+def ecoregions(folderin, fileout, naming=3, eco_loc=2):
     """
     Function to run bootstrpping with replacement over 100 iterations
     
@@ -28,7 +28,7 @@ def ecoregions(folderin, fileout, q_samples, naming=3, eco_loc=2):
             Filepath for folder with files ready for analysis
                          
     fileout: string
-           Filepath for results file ending '.csv'
+           Filepath for results file without '.csv' ending
 
     naming: int
           Section of filename to obtain ID (here grid number). Obtained
@@ -43,9 +43,9 @@ def ecoregions(folderin, fileout, q_samples, naming=3, eco_loc=2):
 
 
     fileList = glob.glob(folderin + '*.shp')
-    q_samples = pd.DataFrame(columns=['eco','ID', 'mean_q', 'sd_q', 'SE'])
+    #q_samples = pd.DataFrame(columns=['eco','ID', 'mean_q', 'sd_q', 'SE'])
     
-    def get_se(f,folderin, fileout, q_samples, naming=3, eco_loc=2):
+    def get_se(f,folderin, fileout, naming=3, eco_loc=2):
         df2 = gpd.read_file(f)
         hd, tl = path.split(f)
         shp_lyr_name = path.splitext(tl)[0]
@@ -96,9 +96,10 @@ def ecoregions(folderin, fileout, q_samples, naming=3, eco_loc=2):
         mean_q = q_values['q'].mean()
         sd_q = q_values['q'].std()
         SE = sd_q/10
+        q_samples = pd.DataFrame(columns=['eco','ID', 'mean_q', 'sd_q', 'SE'])
         q_samples = q_samples.append({'eco':eco, 'ID':name, 'mean_q':mean_q, 'sd_q':sd_q, 'SE':SE}, ignore_index=True)
         del mean_q, sd_q, q_values   
             #df2 = smpl(df, stratify=df['h_100'])
-    q_samples.to_csv(fileout)   
+        q_samples.to_csv(fileout + '{}.csv'.format(f))   
             #means x is just the h100 data - needs logging to normalise (not skewed) 
-    Parallel(n_jobs=50)(delayed(get_se)(f,folderin, fileout, q_samples, naming=3, eco_loc=2)for f in fileList)
+    Parallel(n_jobs=50)(delayed(get_se)(f,folderin, fileout, naming=3, eco_loc=2)for f in fileList)
