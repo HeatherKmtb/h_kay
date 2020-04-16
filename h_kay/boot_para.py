@@ -45,7 +45,7 @@ def ecoregions(folderin, fileout, naming=3, eco_loc=2):
     fileList = glob.glob(folderin + '*.shp')
     #q_samples = pd.DataFrame(columns=['eco','ID', 'mean_q', 'sd_q', 'SE'])
     
-    def get_se(f,folderin, fileout, naming=3, eco_loc=2):
+    def get_se(f,folderin, fileout, naming, eco_loc):
         df2 = gpd.read_file(f)
         hd, tl = path.split(f)
         shp_lyr_name = path.splitext(tl)[0]
@@ -102,4 +102,4 @@ def ecoregions(folderin, fileout, naming=3, eco_loc=2):
             #df2 = smpl(df, stratify=df['h_100'])
         q_samples.to_csv(fileout + '{}.csv'.format(shp_lyr_name))   
             #means x is just the h100 data - needs logging to normalise (not skewed) 
-    Parallel(n_jobs=50)(delayed(get_se)(f,folderin, fileout, naming=3, eco_loc=2)for f in fileList)
+    Parallel(n_jobs=50)(delayed(get_se)(f,folderin, fileout, naming, eco_loc)for f in fileList)
