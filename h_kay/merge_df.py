@@ -30,7 +30,25 @@ def stack_df (filein1, filein2, fileout):
     df2 = pd.read_csv(filein2)
     df = df1.append(df2, sort=True)
     df.to_csv(fileout)
+
+def stack_multi_df(folderin, fileout):
+    """
+    A function which stacks data from two dataframes one aove the other
     
+    Parameters
+    ----------
+    folderin: string
+           filepath for folder containing dataframes to be stacked
+                      
+    fileout: string
+           filepath to save merged dataframe       
+    """
+    data_frames = glob((path.join(folderin, '*.csv')))
+ 
+    dfList = [pd.read_csv(d) for d in data_frames]
+    
+    df = pd.concat(dfList)  
+    df.to_csv(fileout)
        
 def merge_on_col(folder, fileout, column='ID'):
     """
