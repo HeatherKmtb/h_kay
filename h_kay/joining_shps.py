@@ -86,6 +86,7 @@ def ez_join(filein, folderout, folderin):
         if join_gpg_df.empty:
             continue
         oot = os.path.join(folderout, "{}_{}_join.shp".format(filename, filein))
+        print(oot)
         join_gpg_df.to_file(oot)
         
 def ez_join_2_folders(folderin1, folderout, folderin):
