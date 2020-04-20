@@ -7,7 +7,7 @@ Created on Mon Jan 20 16:39:32 2020
 """
 
 import glob
-import os.path
+import os
 from multiprocessing import Pool
 import geopandas
 from joblib import Parallel, delayed
@@ -85,7 +85,8 @@ def ez_join(filein, folderout, folderin):
         join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
         if join_gpg_df.empty:
             continue
-        join_gpg_df.to_file(folderout + "{}_{}join.shp".format(filein, filename))
+        oot = os.path.join(folderout, "{}_{}_join.shp".format(filename, filein))
+        join_gpg_df.to_file(oot)
         
 def ez_join_2_folders(folderin1, folderout, folderin):
     """
