@@ -81,7 +81,8 @@ def ez_join(filein, folderout, folderin):
         filename = os.path.splitext(os.path.basename(file))[0]
         base_gpd_df = geopandas.read_file(file)
         join_gpg_df = geopandas.read_file(filein)
-    
+        print(file)
+        print(filein)
         join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
         if join_gpg_df.empty:
             continue
