@@ -103,7 +103,7 @@ def ez_join_2_folders(folderin1, folderin2, folderout):
     
     file1 = glob.glob(folderin1 + '*.shp')
     
-    def ez_join(file1, folderin1, folderin2, folderout):
+    def ez_join(file1, folderin2, folderout):
 
         files = glob.glob(folderin2 + '*.shp')
         for file in files:
