@@ -85,7 +85,7 @@ def ez_join(filein, folderout, folderin):
         join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
         join_gpg_df.to_file(folderout + "{}_join.shp".format(filename))
         
-def ez_join_2_folders(folderin1, folderin2, folderout):
+def ez_join_2_folders(folderin1, folderout, folderin):
     """
     Function to join a shapefile to another shape file (within).
     
@@ -101,17 +101,6 @@ def ez_join_2_folders(folderin1, folderin2, folderout):
         Filepath for folder to contain joined files
     """    
     
-    file1 = glob.glob(folderin1 + '*.shp')
-    
-    def ez_join(file1, folderin2, folderout):
-
-        files = glob.glob(folderin2 + '*.shp')
-        for file in files:
-            filename = os.path.splitext(os.path.basename(file))[0]
-            base_gpd_df = geopandas.read_file(file)
-            join_gpg_df = geopandas.read_file(file1)
-            
-            join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
-            join_gpg_df.to_file(folderout + "{}_join.shp".format(filename))
- 
-    Parallel(n_jobs=50)(delayed(ez_join)(file1, folderin1, folderin2, folderout) for i in file1)           
+    file_list = glob.glob(folderin1 + '*.shp')
+     
+    Parallel(n_jobs=50)(delayed(ez_join)(i, folderout, folderin) for i in file_list)           
