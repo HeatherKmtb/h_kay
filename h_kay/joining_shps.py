@@ -133,11 +133,10 @@ def ez_join_parallel(filein, folderout, folderin):
         filename = os.path.splitext(os.path.basename(i))[0]
         base_gpd_df = geopandas.read_file(i)
         join_gpg_df = geopandas.read_file(filein)
-        print(i)
-        print(filein)
+
         join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
         if join_gpg_df.empty:
-            print(i)
+            print('empty' + i)
         else:    
             other_filename = os.path.splitext(os.path.basename(filein))[0]
             oot = os.path.join(folderout, "{}_{}_join.shp".format(filename, other_filename))
