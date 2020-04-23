@@ -83,6 +83,8 @@ def ez_join(filein, folderout, folderin):
         join_gpg_df = geopandas.read_file(filein)
         print(file)
         print(filein)
+        if base_gpd_df.empty:
+            continue
         join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
         if join_gpg_df.empty:
             print('empty' + file)
@@ -135,10 +137,10 @@ def ez_join_parallel(filein, folderout, folderin):
         base_gpd_df = geopandas.read_file(i)
         join_gpg_df = geopandas.read_file(filein)
         print(i)
-        join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
-        if join_gpg_df.empty:
+        if base_gpd_df.empty:
             print('empty' + i)
-        else:    
+        else:
+            join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within") 
             other_filename = os.path.splitext(os.path.basename(filein))[0]
             oot = os.path.join(folderout, "{}_{}_join.shp".format(filename, other_filename))
             print(oot)
