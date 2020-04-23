@@ -138,12 +138,15 @@ def ez_join_parallel(filein, folderout, folderin):
         join_gpg_df = geopandas.read_file(filein)
         print(i)
         if base_gpd_df.empty:
-            print('empty' + i)
+            print('empty in' + i)
         else:
             join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within") 
-            other_filename = os.path.splitext(os.path.basename(filein))[0]
-            oot = os.path.join(folderout, "{}_{}_join.shp".format(filename, other_filename))
-            print(oot)
-            join_gpg_df.to_file(oot)  
+            if join_gpg_df.empty:
+                print('empty out' + i)
+            else:
+                other_filename = os.path.splitext(os.path.basename(filein))[0]
+                oot = os.path.join(folderout, "{}_{}_join.shp".format(filename, other_filename))
+                print(oot)
+                join_gpg_df.to_file(oot)  
         
     Parallel(n_jobs=50)(delayed(join)(i, filein, folderout)for i in files)
