@@ -125,7 +125,7 @@ def rmv_cat(folderin, folderout, column='b1', cat=['0.0', '190.0','200.0','202.0
         new.to_file(folderout + '{}.shp'.format(basename))
              
 
-def join_per_grid_parallel(folderin, folderout, rngmn = 0, rngmx = 56001):
+def join_per_grid_parallel(folderin, folderout, naming='*_eco_*_eco_{}.shp',rngmn = 0, rngmx = 56001):
     """
     Function to regroup files that have been split with spilt_per function on 
     grid numbers using a range 
@@ -137,7 +137,10 @@ def join_per_grid_parallel(folderin, folderout, rngmn = 0, rngmx = 56001):
             
     folderout: string
              filepath for folder where output shapefiles will be saved 
-             
+      
+    naming: string
+            file name with {} for section included in range
+            default = '*_eco_*_eco_{}.shp'
     rngmn: int
             minimum range value for grid square numbers 
             Default = 0
@@ -150,7 +153,7 @@ def join_per_grid_parallel(folderin, folderout, rngmn = 0, rngmx = 56001):
     rge = np.arange(rngmn, rngmx,1)
     
     def merge(i, folderin, folderout):
-        fileList = glob.glob(folderin + '*_eco_*_eco_{}.shp'.format(i))
+        fileList = glob.glob(folderin + naming.format(i))
         if len(fileList)==0:
             print(i)
         else: 
