@@ -20,7 +20,7 @@ import glob
 import os.path
 import geopandas as gpd
 from multiprocessing import Pool
-import rsgislib.vectorutils
+#import rsgislib.vectorutils
 import math
 from joblib import Parallel, delayed
 
