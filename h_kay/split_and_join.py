@@ -20,7 +20,7 @@ import glob
 import os.path
 import geopandas as gpd
 from multiprocessing import Pool
-#import rsgislib.vectorutils
+import rsgislib.vectorutils
 import math
 from joblib import Parallel, delayed
 
@@ -125,7 +125,7 @@ def rmv_cat(folderin, folderout, column='b1', cat=['0.0', '190.0','200.0','202.0
         new.to_file(folderout + '{}.shp'.format(basename))
              
 
-def join_per_grid_parallel(folderin, folderout, naming='*_eco_*_eco_{}.shp',rngmn = 0, rngmx = 56001):
+def join_per_grid_parallel(folderin, folderout, naming='*_eco_*_eco_{}.shp',rngmn = 0, rngmx = 56001, cores=50):
     """
     Function to regroup files that have been split with spilt_per function on 
     grid numbers using a range 
@@ -148,6 +148,10 @@ def join_per_grid_parallel(folderin, folderout, naming='*_eco_*_eco_{}.shp',rngm
     rngmx: int
             maximum range value for grid square numbers
             Default = 56001 (equivalent to 1 degree grid)
+            
+    cores: int
+            number of cores to be used in parallel
+            Default = 50
     """
  
     rge = np.arange(rngmn, rngmx,1)
@@ -159,5 +163,5 @@ def join_per_grid_parallel(folderin, folderout, naming='*_eco_*_eco_{}.shp',rngm
         else: 
             rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(i))
     
-    Parallel(n_jobs=50)(delayed(merge)(i, folderin, folderout) for i in rge)
+    Parallel(n_jobs=cores)(delayed(merge)(i, folderin, folderout) for i in rge)
     
