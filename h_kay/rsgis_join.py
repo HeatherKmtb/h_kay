@@ -9,6 +9,8 @@ Created on Fri Apr 24 16:43:23 2020
 
 import rsgislib.vectorutils
 from joblib import Parallel, delayed
+import numpy as np
+import glob
 
 def join_per_grid_parallel(folderin, folderout, naming='*_eco_*_eco_{}.shp',rngmn = 0, rngmx = 56001, cores=50):
     """
