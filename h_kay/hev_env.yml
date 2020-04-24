@@ -1,0 +1,21 @@
+name: hev
+
+channels:
+  - conda-forge 
+
+dependencies:
+  - python=3
+  - pip
+  - glob
+  - os
+  - geopandas
+  - joblib
+  - pandas
+  - numpy
+  - scipy
+  - sklearn
+  - datetime
+  - gdal
+  - matplotlib
+  - functools
+  - seaborn
