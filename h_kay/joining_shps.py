@@ -103,7 +103,7 @@ def ez_join_2_folders(folderin1, folderout, folderin):
     folderin1: string
         Filepath for shp files to join with other shape files (filein2) 
 
-    folderin2: string
+    folderin: string
         Filepath for shp files to join with other shape files (filein1) 
         
     folderout: string
