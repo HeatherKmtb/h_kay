@@ -105,7 +105,7 @@ def ecoregions(folderin, fileout, folderout, naming='gla14_eco_'):
             #for each one make a df with just that bin
             new = final.loc[final['H_bins']==bins]
             #get mean and IQR of each bin
-            data = new['i_cd'].as_matrix()
+            data = new['i_cd'].to_numpy()
             mean = data.mean()
             cd_mean.append(mean)
             q75, q25 = np.percentile (data, [75, 25])
@@ -143,8 +143,8 @@ def ecoregions(folderin, fileout, folderout, naming='gla14_eco_'):
         def f(x,q):
             return 1- np.exp(-q * x)
     
-        x = final['i_h100'].as_matrix()
-        y = final['i_cd'].as_matrix() 
+        x = final['i_h100'].to_numpy()
+        y = final['i_cd'].to_numpy() 
         x = np.append(x, [0])
         y = np.append(y, [0])
     
@@ -299,7 +299,7 @@ def worldclim(folderin, fileout, folderout, ecosplit = 2, climsplit = 4):
                 #for each one make a df with just that bin
                 new = final.loc[final['H_bins']==bins]
                 #get mean and IQR of each bin
-                data = new['i_cd'].as_matrix()
+                data = new['i_cd'].to_numpy()
                 mean = data.mean()
                 cd_mean.append(mean)
                 q75, q25 = np.percentile (data, [75, 25])
@@ -337,8 +337,8 @@ def worldclim(folderin, fileout, folderout, ecosplit = 2, climsplit = 4):
             def f(x,q):
                 return 1- np.exp(-q * x)
     
-            x = final['i_h100'].as_matrix()
-            y = final['i_cd'].as_matrix() 
+            x = final['i_h100'].to_numpy()
+            y = final['i_cd'].to_numpy() 
             x = np.append(x, [0])
             y = np.append(y, [0])
     
@@ -490,7 +490,7 @@ def biomes(folderin, fileout, folderout, naming='gla14_eco_'):
             #for each one make a df with just that bin
             new = final.loc[final['H_bins']==bins]
             #get mean and IQR of each bin
-            data = new['i_cd'].as_matrix()
+            data = new['i_cd'].to_numpy()
             mean = data.mean()
             cd_mean.append(mean)
             q75, q25 = np.percentile (data, [75, 25])
@@ -528,8 +528,8 @@ def biomes(folderin, fileout, folderout, naming='gla14_eco_'):
         def f(x,q):
             return 1- np.exp(-q * x)
     
-        x = final['i_h100'].as_matrix()
-        y = final['i_cd'].as_matrix() 
+        x = final['i_h100'].to_numpy()
+        y = final['i_cd'].to_numpy() 
         x = np.append(x, [0])
         y = np.append(y, [0])
     
@@ -688,7 +688,7 @@ def grid(folderin, fileout, folderout, naming=3, eco_loc=2):
             #for each one make a df with just that bin
             new = final.loc[final['H_bins']==bins]
             #get mean and IQR of each bin
-            data = new['i_cd'].as_matrix()
+            data = new['i_cd'].to_numpy()
             mean = data.mean()
             cd_mean.append(mean)
             q75, q25 = np.percentile (data, [75, 25])
@@ -726,8 +726,8 @@ def grid(folderin, fileout, folderout, naming=3, eco_loc=2):
         def f(x,q):
             return 1- np.exp(-q * x)
     
-        x = final['i_h100'].as_matrix()
-        y = final['i_cd'].as_matrix() 
+        x = final['i_h100'].to_numpy()
+        y = final['i_cd'].to_numpy() 
         x = np.append(x, [0])
         y = np.append(y, [0])
     
