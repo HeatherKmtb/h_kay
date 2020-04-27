@@ -9,7 +9,7 @@ Created on Mon Jan 20 16:39:32 2020
 import glob
 import os
 from multiprocessing import Pool
-import geopandas
+import geopandas as gpd
 from joblib import Parallel, delayed
 
 
@@ -29,13 +29,12 @@ def gla14_join(filein, folderout, folderno):
             Number - needs to be changed from 1 to 10 and run due to file quantity and size         
     """
     def performSpatialJoin(base_vec, base_lyr, join_vec, join_lyr, output_vec, output_lyr):
-        import geopandas
         # Must have rtree installed - otherwise error "geopandas/tools/sjoin.py"
         # AttributeError: 'NoneType' object has no attribute 'intersection'
-        base_gpd_df = geopandas.read_file(base_vec)
-        join_gpg_df = geopandas.read_file(join_vec)
+        base_gpd_df = gpd.read_file(base_vec)
+        join_gpg_df = gpd.read_file(join_vec)
     
-        join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
+        join_gpg_df = gpd.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
         join_gpg_df.to_file(output_vec)
 
 
@@ -78,14 +77,15 @@ def ez_join(filein, folderout, folderin):
     """
     files = glob.glob(folderin + '*.shp')
     for file in files:
+
         filename = os.path.splitext(os.path.basename(file))[0]
-        base_gpd_df = geopandas.read_file(file)
-        join_gpg_df = geopandas.read_file(filein)
+        base_gpd_df = gpd.read_file(file)
+        join_gpg_df = gpd.read_file(filein)
         print(file)
         print(filein)
         if base_gpd_df.empty:
             continue
-        join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
+        join_gpg_df = gpd.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
         if join_gpg_df.empty:
             print('empty' + file)
             continue
@@ -134,13 +134,13 @@ def ez_join_parallel(filein, folderout, folderin):
     
     def join(i, filein, folderout):
         filename = os.path.splitext(os.path.basename(i))[0]
-        base_gpd_df = geopandas.read_file(i)
-        join_gpg_df = geopandas.read_file(filein)
+        base_gpd_df = gpd.read_file(i)
+        join_gpg_df = gpd.read_file(filein)
         print(i)
         if base_gpd_df.empty:
             print('empty in' + i)
         else:
-            join_gpg_df = geopandas.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within") 
+            join_gpg_df = gpd.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within") 
             if join_gpg_df.empty:
                 print('empty out' + i)
             else:
@@ -150,3 +150,28 @@ def ez_join_parallel(filein, folderout, folderin):
                 join_gpg_df.to_file(oot)  
         
     Parallel(n_jobs=50)(delayed(join)(i, filein, folderout)for i in files)
+    
+def another_bleddy_join(folderin, folderout, col_nm='id'):
+    """
+    Function to join a shapefiles together based on a column.
+    
+    Parameters
+    ----------          
+    folderin: string
+             Filepath for shp files to join based on column
+             
+    folderin: string
+             Filepath for folder to contain joined files 
+             
+    col_nm: string
+             Name of column for join         
+    """        
+
+    fileList=glob.glob(folderin + '*.shp')
+
+    for file in fileList:
+        df = gpd.read_file(file)
+        basename = os.path.splitext(os.path.basename(file))[0]
+        id_name = df[col_nm][1]
+        oot = os.path.join(folderout, "{}_{}.shp".format(basename, id_name))
+        df.to_file(oot)    
