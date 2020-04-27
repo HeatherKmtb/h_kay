@@ -10,6 +10,7 @@ import pandas as pd
 from functools import reduce
 from glob import glob
 from os import path
+import geopandas as gpd
 
 def stack_df (filein1, filein2, fileout):
     """

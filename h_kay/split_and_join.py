@@ -65,7 +65,7 @@ def split_per(folderin, folderout, split_col='ECO_ID', colNms=['i_h100','i_cd',
 
 
 
-def join_per(folderin, folderout, IDfile='./eco/final_ID.csv', column='ECO_ID'):
+def join_per(folderin, folderout, IDfile='./eco/final_ID.csv', column='ECO_ID', naming='*_eco_{}.shp'):
     """
     Function to regroup files that have been split with spilt_per function on elements of split
     
@@ -84,13 +84,17 @@ def join_per(folderin, folderout, IDfile='./eco/final_ID.csv', column='ECO_ID'):
     column: string
           column name from IDfile containing elements for the join.   
           Default = 'ECO_ID'
+          
+    naming: string
+          filename with {} to select part of filename which matches naming of element of join
+          Default = '*_eco_{}.shp'
     """
     #import csv with IDs to obtain list for merge
     df = pd.read_csv(IDfile)
     ecoNms = list(np.unique(df[column]))#get list of unique ecoregions     
 
     for ecoNm in ecoNms:
-        fileList = glob.glob(folderin + '*_eco_{}.shp'.format(ecoNm))#here also need dict ref
+        fileList = glob.glob(folderin + naming.format(ecoNm))#here also need dict ref
         rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_eco_{}.shp'.format(ecoNm))#use dict to get ecoNm, create new folder too?
  
     #mkdir is make new folder
