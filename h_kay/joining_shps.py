@@ -172,6 +172,6 @@ def another_bleddy_join(folderin, folderout, col_nm='id'):
     for file in fileList:
         df = gpd.read_file(file)
         basename = os.path.splitext(os.path.basename(file))[0]
-        id_name = df[col_nm][1]
+        id_name = df[col_nm][0]
         oot = os.path.join(folderout, "{}_{}.shp".format(basename, id_name))
         df.to_file(oot)    
