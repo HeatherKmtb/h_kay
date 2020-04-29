@@ -11,6 +11,7 @@ import os
 from multiprocessing import Pool
 import geopandas as gpd
 from joblib import Parallel, delayed
+from functools import reduce
 
 
 def gla14_join(filein, folderout, folderno):
@@ -96,7 +97,7 @@ def ez_join(filein, folderout, folderin):
         
 def ez_join_2_folders(folderin1, folderout, folderin):
     """
-    Function to join a shapefile to another shape file (within).
+    Function to join a folder of shapefiles to another folder of shapefiles (within).
     
     Parameters
     ----------
@@ -116,7 +117,7 @@ def ez_join_2_folders(folderin1, folderout, folderin):
 
 def ez_join_parallel(filein, folderout, folderin):
     """
-    Function to join a shapefile to another shape file (within).
+    Function to join a shapefile to another shape file (within) in parallel, 50 cores.
     
     Parameters
     ----------
@@ -175,3 +176,25 @@ def another_bleddy_join(folderin, folderout, col_nm='id'):
         id_name = df[col_nm][0]
         oot = os.path.join(folderout, "{}_{}.shp".format(basename, id_name))
         df.to_file(oot)    
+        
+def union(folderin, fileout):
+    """
+    Function to join a shapefile to another shape file (within).
+    
+    Parameters
+    ----------
+    folderin: string
+          Filepath for shp files to be joined
+          
+    fileout: string
+             Filepath joined files shapefile
+      
+    """
+    
+    fileList = glob.glob(folderin + '*.shp')
+    
+    dfList = [gpd.read_file(d) for d in fileList]
+    
+    final_shp = reduce(lambda left,right: gpd.overlay(left,right,how='union'), dfList)
+
+    final_shp.to_file = fileout
