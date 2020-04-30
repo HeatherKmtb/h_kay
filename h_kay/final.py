@@ -776,7 +776,7 @@ def grid(folderin, fileout, folderout, naming=3, eco_loc=2):
         #plots IQR
         ax.bar(plot['median'],plot['mean'],width=0, yerr=plot['iqr'])
         #sets title and axis labels
-        ax.set_title('grid no.' + name)
+        ax.set_title('ecoregion' + eco + 'in grid no.' + name)
         ax.set_ylabel('Canopy Density')
         ax.set_xlabel('Height - h100 (m)')
         ax.set_xlim([0, 60])
@@ -793,5 +793,5 @@ def grid(folderin, fileout, folderout, naming=3, eco_loc=2):
         ax.annotate('r2 = ' + str(r_sq), xy=(0.975,0.15), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
         ax.annotate('RMSE = ' + str(rms),xy=(0.975,0.10), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')   
         ax.annotate('No of footprints = ' + str(footprints),xy=(0.975,0.05), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
-        plt.savefig(folderout + 'fig{}.pdf'.format(name))
+        plt.savefig(folderout + 'fig{}_{}.pdf'.format(eco, name))
         plt.close
