@@ -643,7 +643,7 @@ def grid(folderin, fileout, folderout, naming=3, eco_loc=2):
         name = name_comp[naming] 
         eco = name_comp[eco_loc]
         print(name)
-        print(eco_loc)
+        print(eco)
         #remove data with H_100 >= 0 prior to logging
         test2 = df[df['i_h100']>=0] 
         footprints = len(df['i_h100'])
@@ -684,7 +684,7 @@ def grid(folderin, fileout, folderout, naming=3, eco_loc=2):
         cd_iqr = []
         #Hbin = []
         print(name)
-        print(eco_loc)
+        print(eco)
         HBins = list(np.unique(final['H_bins']))
         for bins in HBins:
             #for each one make a df with just that bin
