@@ -11,10 +11,12 @@ import datetime
 from datetime import timedelta
 import glob
 from os import path
+import geopandas as gpd
 
-def date_file(filein, fileout):
+def csv_date_file(filein, fileout):
     """
-    Function to compute q and provide results (csv) and figures (pdf)
+    Function to convert matlab datenum to day, month, year. For one file in 
+    csv format
     
     Parameters
     ----------
@@ -48,9 +50,10 @@ def date_file(filein, fileout):
 
     df.to_csv(fileout)
 
-def date_folder(folderin, folderout):
+def csv_date_folder(folderin, folderout):
     """
-    Function to compute q and provide results (csv) and figures (pdf)
+    Function to convert matlab datenum to day, month, year. For a folder of
+    files in csv format
     
     Parameters
     ----------
@@ -88,4 +91,46 @@ def date_folder(folderin, folderout):
         df['month'] = month
 
         df.to_csv(folderout + '{}.csv'.format(name))
+ 
+def shp_date_folder(folderin, folderout):
+    """
+    Function to convert matlab datenum to day, month, year and append as 
+    columns to original file. For a folder of files in shp format
+    
+    Parameters
+    ----------
+    
+    folderin: string
+            Filepath for folder containing .shp files with dates in matlab 
+            format
+                          
+    folderout: string
+           Filepath for folder for results files ending '.shp'
+   
+    """   
+    fileList = glob.glob(folderin + '*.shp')
+    
+    for file in fileList:  
+        hd, tl = path.split(file)
+        name = tl.replace(".shp", "")
+        df = gpd.read_file(file)
+        date = []
+        year = []
+        month = []
         
+        matlab_datenum = df['i_acqdate']#.to_numpy()  
+        datenum = matlab_datenum.astype(int)  
+        
+        for i in datenum:
+            python_datetime = datetime.date.fromordinal(int(i) - 366) + timedelta(days=i%1)
+            year1 = python_datetime.year
+            month1 = python_datetime.month
+            date.append(python_datetime)
+            year.append(year1)
+            month.append(month1)
+    
+        #df['date'] = date
+        df['year'] = year
+        df['month'] = month
+
+        df.to_file(folderout + '{}.shp'.format(name))
