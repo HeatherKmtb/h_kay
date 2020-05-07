@@ -15,7 +15,7 @@ import glob
 from os import path
 from joblib import Parallel, delayed
 
-def grid_parallel(folderin, resultsout, folderout, naming=3, eco_loc=2):
+def grid_parallel(folderin, resultsout, folderout, grid=4, eco_loc=2, month=6):
     """
     Function to compute q and provide results (csv) and figures (pdf)
     
@@ -46,7 +46,7 @@ def grid_parallel(folderin, resultsout, folderout, naming=3, eco_loc=2):
     fileList = glob.glob(folderin + '*.shp')
 
 
-    #resultsb = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'rmse'])
+    #resultsb = pd.DataFrame(columns = ['eco', 'ID', 'month', 'qout', 'r_sq', 'deg_free', 'rmse'])
     def final(i, folderin, resultsout, folderout, naming, eco_loc):
         #create df for results
         resultsa = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'rmse','r_sq_mean'])
@@ -57,9 +57,10 @@ def grid_parallel(folderin, resultsout, folderout, naming=3, eco_loc=2):
             hd, tl = path.split(i)
             shp_lyr_name = path.splitext(tl)[0]
             name_comp = shp_lyr_name.split('_')
-            name = name_comp[naming] 
+            name = name_comp[grid] 
             eco = name_comp[eco_loc]
-            print(name)
+            month = name_comp[month]
+            print(name, eco, month)
             #remove data with H_100 >= 0 prior to logging
             test2 = df[df['i_h100']>=0] 
             footprints = len(df['i_h100'])
@@ -182,7 +183,7 @@ def grid_parallel(folderin, resultsout, folderout, naming=3, eco_loc=2):
         #plt.close
         
         #extract info: eco, qout, r_sq, deg_free (only gets one eco in data)
-                    resultsa = resultsa.append({'eco': eco, 'ID': name, 
+                    resultsa = resultsa.append({'eco': eco, 'ID': name, 'month': month
                                                 'qout': qout, 'r_sq': r_sq, 
                                                 'deg_free': footprints, 
                                                 'rmse': rms, 'r_sq_mean':  
@@ -190,7 +191,7 @@ def grid_parallel(folderin, resultsout, folderout, naming=3, eco_loc=2):
         #if deg_free>=60:
             #resultsb = resultsb.append({'eco': name2, 'ID': name, 'qout': qout, 'r_sq': r_sq, 'deg_free': deg_free, 'rmse': rms}, ignore_index=True)        
             #export to excel
-                    resultsa.to_csv(resultsout + '{}_{}.csv'.format(eco,name))
+                    resultsa.to_csv(resultsout + '{}_{}_{}.csv'.format(eco,name,month))
             #resultsb.to_csv('./eco/new/results/results_over60.csv')
 
         #plot the result
@@ -201,7 +202,7 @@ def grid_parallel(folderin, resultsout, folderout, naming=3, eco_loc=2):
                     #plots IQR
                     ax.bar(plot['median'],plot['mean'],width=0, yerr=plot['iqr'])
                     #sets title and axis labels
-                    ax.set_title('ecoregion' + eco + 'in grid no.' + name)
+                    ax.set_title('ecoregion ' + eco + ' in grid no. ' + name + ' for month ' + month)
                     ax.set_ylabel('Canopy Density')
                     ax.set_xlabel('Height - h100 (m)')
                     ax.set_xlim([0, 60])
@@ -218,7 +219,7 @@ def grid_parallel(folderin, resultsout, folderout, naming=3, eco_loc=2):
                     ax.annotate('r2 = ' + str(r_sq), xy=(0.975,0.15), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
                     ax.annotate('RMSE = ' + str(rms),xy=(0.975,0.10), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')   
                     ax.annotate('No of footprints = ' + str(footprints),xy=(0.975,0.05), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
-                    plt.savefig(folderout + 'fig{}_{}.pdf'.format(eco, name))
+                    plt.savefig(folderout + 'fig{}_{}_{}.pdf'.format(eco, name, month))
                     plt.close
     
     #    

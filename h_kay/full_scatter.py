@@ -32,15 +32,7 @@ import geopandas as gpd
 #import glob
 #from os import path
 
-#import csv with IDs and convert to dict
-#df_id2 = pd.read_csv('/Users/heatherkay/Desktop/MPhil/ecoregions/final_ID.csv')
-#df_id = df_id2.astype({'ECO_ID': 'str'})
-#eco_ID = df_id.set_index('ECO_ID')['ECO_NAME'].to_dict()
 
-#using 'file' to title plot  
-file = '/Users/heatherkay/Desktop/MPhil/ecoregions/test/*.shp'
-name = 'plot title'
-savefigloc = 'place to savefig'
 
 def full_scatter(filein, name, fileout):
     """
@@ -72,44 +64,15 @@ def full_scatter(filein, name, fileout):
     test2a = test2.assign(log_i_h100 = y)
 
     #get quantiles
-    a = np.quantile(test2a['log_i_h100'],0.95)
-    b = np.quantile(test2a['log_i_h100'],0.05)
+    a = np.quantile(test2a['log_i_h100'],0.99)
+    b = np.quantile(test2a['log_i_h100'],0.01)
 
     #remove data outside of 5% quantiles
     test3 = test2a[test2a.log_i_h100 >b]
     final = test3[test3.log_i_h100 <a]
 
     del a, b, x, y, test2, test2a, test3
-    
-    #NEXT STEP. Bin remaining data in order to get mean and IQR of each bin
-
-    #add column with bins 
-#final['H_bins']=pd.cut(x=final['i_h100'], bins=np.arange(0, 120+2, 2))
-
-    #now something along the lines of:
-    #for bin in HBins find the mean and IQR...
-    #first create lists to append mean and IQRs to
-#    cd_mean = []
-#    cd_iqr = []
-
-#    HBins = list(np.unique(final['H_bins']))
-#    for bins in HBins:
-        #for each one make a df with just that bin
-#        new = final.loc[final['H_bins']==bins]
-        #get mean and IQR of each bin
-#        data = new['i_cd'].to_numpy()
-#        mean = data.mean()
-#        cd_mean.append(mean)
-#        q75, q25 = np.percentile (data, [75, 25])
-#        iqr = q75 - q25
-#        cd_iqr.append(iqr)
-        
-#    del new, data, q75, q25   
-    
-    #get median of bins for plotting
-#    med = [binn.left + 1 for binn in HBins]
-#    plot = pd.DataFrame({'mean': cd_mean, 'iqr': iqr, 'bins': HBins, 'median': med})
-        
+            
     #regression 
     def f(x,q):
         return 1- np.exp(-q * x)
@@ -127,24 +90,7 @@ def full_scatter(filein, name, fileout):
     deg_free = (len(x)-1)
     r_sq = round(r_sq, 2)
 #    y_predict = f(x, qout)
-    
-#    from sklearn.metrics import mean_squared_error
- #   from math import sqrt
-  #  mse = mean_squared_error(y, y_predict)
-   # rms = sqrt(mse)
-    
-    #fig1 = plt.figure(); ax =fig1.add_subplot(1,1,1)
-    #ax.scatter(plot['y'],plot['y_predict'])
-    #plt.savefig1('./eco/results/figs/values{}.pdf'.format(name))
 
-    #extract info: eco, qout, r_sq, deg_free (only gets one eco in data)
-    #resultsa = resultsa.append({'eco': name, 'qout': qout, 'r_sq': r_sq, 'deg_free': deg_free, 'rmse': rms}, ignore_index=True)
-    #if deg_free>=60:
-    #    resultsb = resultsb.append({'eco': name, 'qout': qout, 'r_sq': r_sq, 'deg_free': deg_free, 'rmse': rms}, ignore_index=True)        
-    #export to excel
-    #resultsa.to_csv('./eco/results/results.csv')
-    #resultsb.to_csv('./eco/results/results_over60footprints.csv')
-    #plot the result
     fig = plt.figure(); ax = fig.add_subplot(1,1,1)
     #plots H_100 on x with I_CD on y
     ax.scatter(x,y,marker='.')
