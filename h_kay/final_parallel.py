@@ -183,7 +183,7 @@ def grid_parallel(folderin, resultsout, folderout, grid=4, eco_loc=2, month=6):
         #plt.close
         
         #extract info: eco, qout, r_sq, deg_free (only gets one eco in data)
-                    resultsa = resultsa.append({'eco': eco, 'ID': name, 'month': month
+                    resultsa = resultsa.append({'eco': eco, 'ID': name, 'month': month,
                                                 'qout': qout, 'r_sq': r_sq, 
                                                 'deg_free': footprints, 
                                                 'rmse': rms, 'r_sq_mean':  
