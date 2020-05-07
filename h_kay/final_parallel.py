@@ -15,7 +15,7 @@ import glob
 from os import path
 from joblib import Parallel, delayed
 
-def grid_parallel(folderin, fileout, folderout, naming=3, eco_loc=2):
+def grid_parallel(folderin, resultsout, folderout, naming=3, eco_loc=2):
     """
     Function to compute q and provide results (csv) and figures (pdf)
     
@@ -35,8 +35,8 @@ def grid_parallel(folderin, fileout, folderout, naming=3, eco_loc=2):
           Obtained as with naming
           Default = 2
           
-    fileout: string
-           Filepath for results file ending '.csv'
+    resultsout: string
+           Filepath for folder for results csvs to concat afterwards
            
     folderout: string
              Filepath for folder to save the figures            
@@ -45,10 +45,11 @@ def grid_parallel(folderin, fileout, folderout, naming=3, eco_loc=2):
     #using 'file' to title plot  
     fileList = glob.glob(folderin + '*.shp')
 
-    #create df for results
-    resultsa = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'rmse','r_sq_mean'])
+
     #resultsb = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'rmse'])
-    def final(i, folderin, fileout, folderout, resultsa, naming, eco_loc):
+    def final(i, folderin, resultsout, folderout, naming, eco_loc):
+        #create df for results
+        resultsa = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'rmse','r_sq_mean'])
         df = gpd.read_file(i)
         if df.empty:
             print('empty df' + i)
@@ -189,7 +190,7 @@ def grid_parallel(folderin, fileout, folderout, naming=3, eco_loc=2):
         #if deg_free>=60:
             #resultsb = resultsb.append({'eco': name2, 'ID': name, 'qout': qout, 'r_sq': r_sq, 'deg_free': deg_free, 'rmse': rms}, ignore_index=True)        
             #export to excel
-                    resultsa.to_csv(fileout)
+                    resultsa.to_csv(resultsout + '{}_{}.csv'.format(eco,name))
             #resultsb.to_csv('./eco/new/results/results_over60.csv')
 
         #plot the result
@@ -219,5 +220,6 @@ def grid_parallel(folderin, fileout, folderout, naming=3, eco_loc=2):
                     ax.annotate('No of footprints = ' + str(footprints),xy=(0.975,0.05), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
                     plt.savefig(folderout + 'fig{}_{}.pdf'.format(eco, name))
                     plt.close
-        
-    Parallel(n_jobs=50)(delayed(final)(i, folderin, fileout, folderout, resultsa, naming, eco_loc)for i in fileList)    
+    
+    #    
+    Parallel(n_jobs=50)(delayed(final)(i, folderin, resultsout, folderout, naming, eco_loc)for i in fileList)  
