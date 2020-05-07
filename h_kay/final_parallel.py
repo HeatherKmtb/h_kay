@@ -47,7 +47,7 @@ def grid_parallel(folderin, resultsout, folderout, grid=4, eco_loc=2, month=6):
 
 
     #resultsb = pd.DataFrame(columns = ['eco', 'ID', 'month', 'qout', 'r_sq', 'deg_free', 'rmse'])
-    def final(i, folderin, resultsout, folderout, naming, eco_loc):
+    def final(i, folderin, resultsout, folderout, grid, eco_loc, month):
         #create df for results
         resultsa = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'rmse','r_sq_mean'])
         df = gpd.read_file(i)
@@ -223,4 +223,4 @@ def grid_parallel(folderin, resultsout, folderout, grid=4, eco_loc=2, month=6):
                     plt.close
     
     #    
-    Parallel(n_jobs=50)(delayed(final)(i, folderin, resultsout, folderout, naming, eco_loc)for i in fileList)  
+    Parallel(n_jobs=50)(delayed(final)(i, folderin, resultsout, folderout, grid, eco_loc, month)for i in fileList)  
