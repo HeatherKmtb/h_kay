@@ -848,8 +848,7 @@ def grid_date(folderin, fileout, folderout, grid=4, eco_loc=2, datnum=6):
         name = name_comp[grid] 
         eco = name_comp[eco_loc]
         date = name_comp[datnum]
-        print(name)
-        print(eco)
+        print('Grid ' + name, ' Eco ' + eco, ' Date ' + date)
         #remove data with H_100 >= 0 prior to logging
         test2 = df[df['i_h100']>=0] 
         footprints = len(df['i_h100'])
