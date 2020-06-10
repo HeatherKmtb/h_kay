@@ -52,4 +52,39 @@ def join_per_grid_parallel(folderin, folderout, naming='*_eco_*_eco_{}.shp',rngm
             rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(i))
     
     Parallel(n_jobs=cores)(delayed(merge)(i, folderin, folderout) for i in rge)
+
+def join_per(folderin, folderout, IDfile='./eco/final_ID.csv', column='ECO_ID', naming='*_eco_{}.shp'):
+    """
+    Function to regroup files that have been split with spilt_per function on elements of split
+    
+    Parameters
+    ----------
+    folderin: string
+            filepath for folder containing shapefiles to be joined
+            
+    folderout: string
+             filepath for folder where output shapefiles will be saved 
+             
+    IDfile: string
+          filepath for csv with column containing list of elements for the join.
+          Default = './eco/final_ID.csv'
+          
+    column: string
+          column name from IDfile containing elements for the join.   
+          Default = 'ECO_ID'
+          
+    naming: string
+          filename with {} to select part of filename which matches naming of element of join
+          Default = '*_eco_{}.shp'
+    """
+    #import csv with IDs to obtain list for merge
+    df = pd.read_csv(IDfile)
+    ecoNms = list(np.unique(df[column]))#get list of unique ecoregions     
+
+    for ecoNm in ecoNms:
+        fileList = glob.glob(folderin + naming.format(ecoNm))#here also need dict ref
+        rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_eco_{}.shp'.format(ecoNm))#use dict to get ecoNm, create new folder too?
+ 
+    #mkdir is make new folder
+
     

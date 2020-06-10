@@ -92,6 +92,7 @@ def full_scatter(filein, name, fileout):
 #    y_predict = f(x, qout)
 
     fig = plt.figure(); ax = fig.add_subplot(1,1,1)
+    plt.rcParams.update({'font.size':12})
     #plots H_100 on x with I_CD on y
     ax.scatter(x,y,marker='.')
     #plots IQR
@@ -108,7 +109,7 @@ def full_scatter(filein, name, fileout):
     #for each value of x calculating the corresponding y value
     ycurve = [f(t, qout) for t in xdata]
     #plotting the curve
-    ax.plot(xdata, ycurve, linestyle='-', c='green')
+    ax.plot(xdata, ycurve, linestyle='-', c='red')
     #adding qout, r_sq and deg_free to plot
     ax.annotate('q = ' + str(qout[0]), xy=(0.975,0.15), xycoords='axes fraction', fontsize=9, horizontalalignment='right', verticalalignment='bottom')
     ax.annotate('r2 = ' + str(r_sq), xy=(0.975,0.10), xycoords='axes fraction', fontsize=9, horizontalalignment='right', verticalalignment='bottom')
