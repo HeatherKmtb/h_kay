@@ -31,7 +31,7 @@ def eco_per_annum(folderin, fileout):
            Filepath for results file ending '.csv'         
     """
     #import csv with IDs and convert to dict
-    df_id2 = pd.read_csv('./eco/final_ID.csv')
+    df_id2 = pd.read_csv('./change/final_ID.csv')
     df_id = df_id2.astype({'ECO_ID': 'str'})
     eco_ID = df_id.set_index('ECO_ID')['ECO_NAME'].to_dict()
 
