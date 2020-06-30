@@ -77,8 +77,8 @@ def ecoregions(folderin, fileout, naming='gla14_eco_'):
             def f(x,q):
                 return 1- np.exp(-q * x)
     
-            x = final['i_h100'].as_matrix()
-            y = final['i_cd'].as_matrix() 
+            x = final['i_h100'].to_numpy()
+            y = final['i_cd'].to_numpy() 
     
             qout, qcov = curve_fit(f, x, y, 0.04)
             qout = qout.round(decimals=4)
@@ -156,8 +156,8 @@ def worldclim(folderin, fileout, ecosplit = 2, climsplit = 4):
             def f(x,q):
                 return 1- np.exp(-q * x)
     
-            x = final['i_h100'].as_matrix()
-            y = final['i_cd'].as_matrix() 
+            x = final['i_h100'].to_numpy()
+            y = final['i_cd'].to_numpy() 
     
             qout, qcov = curve_fit(f, x, y, 0.04)
             qout = qout.round(decimals=4)

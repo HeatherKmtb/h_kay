@@ -12,7 +12,7 @@ from joblib import Parallel, delayed
 import numpy as np
 import glob
 
-def join_per_grid_parallel(folderin, folderout, naming='*_eco_*_eco_{}.shp',rngmn = 0, rngmx = 56001, cores=50):
+def join_per_grid_parallel(folderin, folderout, naming='*_eco_*_eco_{}.shp',rngmn = 0, rngmx = 56001, cores=5):
     """
     Function to regroup files that have been split with spilt_per function on 
     grid numbers using a range 

@@ -118,19 +118,24 @@ def shp_date_folder(folderin, folderout):
         year = []
         month = []
         
+        if df.empty:
+            continue
         matlab_datenum = df['i_acqdate']#.to_numpy()  
         datenum = matlab_datenum.astype(int)  
+        print(name)
         
         for i in datenum:
             python_datetime = datetime.date.fromordinal(int(i) - 366) + timedelta(days=i%1)
             year1 = python_datetime.year
             month1 = python_datetime.month
-            date.append(python_datetime)
+            test = python_datetime.strftime('%Y-%m')
+            date1 = test
+            date.append(date1)
             year.append(year1)
             month.append(month1)
     
-        #df['date'] = date
+        df['date'] = date
         df['year'] = year
         df['month'] = month
-
+               
         df.to_file(folderout + '{}.shp'.format(name))

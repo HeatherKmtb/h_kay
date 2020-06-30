@@ -29,7 +29,7 @@ def gla14_join(filein, folderout, folderno):
     folderno: string
             Number - needs to be changed from 1 to 10 and run due to file quantity and size         
     """
-    def performSpatialJoin(base_vec, base_lyr, join_vec, join_lyr, output_vec, output_lyr):
+   def performSpatialJoin(base_vec, base_lyr, join_vec, join_lyr, output_vec, output_lyr):
         # Must have rtree installed - otherwise error "geopandas/tools/sjoin.py"
         # AttributeError: 'NoneType' object has no attribute 'intersection'
         base_gpd_df = gpd.read_file(base_vec)
@@ -177,3 +177,5 @@ def another_bleddy_join(folderin, folderout, col_nm='id'):
         oot = os.path.join(folderout, "{}_{}.shp".format(basename, id_name))
         df.to_file(oot)    
         
+
+            
