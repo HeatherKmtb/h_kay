@@ -106,7 +106,7 @@ def join_col_shp(filein, fileout, column1, column2, join_column='join'):
     df2 = df1.str.strip('[]').astype(float)
     df3 = df.assign(q = df2)
     df3.to_file(fileout)
-    
+
 def join_col_csv(filein, fileout, column1, column2, join_column='join'):
     """
     Function to join data in 2 columns as a string, plus remove brackets from 'qout' column
@@ -115,16 +115,16 @@ def join_col_csv(filein, fileout, column1, column2, join_column='join'):
     ----------
     filein: string
             filepath for shp file to process
-            
+    
     folderout: string
             filepath to save processed file
-            
+    
     column1: string
             name of first column to join
-            
+    
     column2: string
             name of second column to join  
-
+    
     join_column: string
             name of column with join string
             Default = 'join'             
@@ -135,4 +135,14 @@ def join_col_csv(filein, fileout, column1, column2, join_column='join'):
     df1 = df['qout'] = df.qout.astype(str)
     df2 = df1.str.strip('[]').astype(float)
     df3 = df.assign(q = df2)
-    df3.to_csv(fileout)    
+    df3.to_csv(fileout)     
+
+def calc_diff(filein, fileout):
+    df = pd.read_csv(filein)
+    df1 = df.dropna(subset = ['q_x','q_y'])
+    x = df1['q_x']
+    y = df1['q_y']
+    diff = abs(x.sub(y))
+    df1['diff'] = diff
+    df1.to_csv(fileout)
+    

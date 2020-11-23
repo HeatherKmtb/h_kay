@@ -80,7 +80,7 @@ def rmv_cat(folderin, folderout, column='b1', cat=['0.0', '190.0','200.0','202.0
     cat: list of strings
        names of categories to be dropped      
     """
-    fileList = glob.glob(folderin + '*_eco_*.shp')
+    fileList = glob.glob(folderin + '*.shp')
 
     for filename in fileList:
         basename = os.path.splitext(os.path.basename(filename))[0]
