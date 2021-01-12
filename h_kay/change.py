@@ -213,12 +213,12 @@ def plot_mean_iqr(filein, fileout):
     
 #short section of code to obtain annual mean of height data
 #filein = '/Users/heatherkay/q_research/change/test_year/2007.shp'
-df = gpd.read_file(filein)
-height = df['i_h100']
-mean = height.mean()
-deg_free = len(height)
-print(mean)
-print(deg_free)
+#df = gpd.read_file(filein)
+#height = df['i_h100']
+#mean = height.mean()
+#deg_free = len(height)
+#print(mean)
+#print(deg_free)
 
 
 def plot_grid_per_annum(folderin, folderout):
