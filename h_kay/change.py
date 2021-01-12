@@ -428,7 +428,7 @@ def get_laser_period(folderin, folderout):
         else:
             print('ph3_' + grid)        
         
-        
+           
 
 def mean_per_phase(folderin, fileout):
     """
@@ -562,7 +562,7 @@ def mean_per_intact(folderin, fileout):
 
     resultsa.to_csv(fileout)    
             
- def plot_intact(folderin, folderout):
+def plot_intact(folderin, folderout):
     """
     Function to generate histogram of height values for each year within a grid cell
     
