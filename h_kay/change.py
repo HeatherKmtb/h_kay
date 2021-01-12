@@ -20,7 +20,7 @@ import seaborn
 import datetime
 
 
-def eco_per_annum(folderin, fileout):
+def eco_per_annum(filein, folderin, fileout):
     """
     Function to obtain average height and average cd per year and per ecoregion
     
@@ -34,7 +34,7 @@ def eco_per_annum(folderin, fileout):
            Filepath for results file ending '.csv'         
     """
     #import csv with IDs and convert to dict
-    df_id2 = pd.read_csv('./change/final_ID.csv')
+    df_id2 = pd.read_csv(filein)
     df_id = df_id2.astype({'ECO_ID': 'str'})
     eco_ID = df_id.set_index('ECO_ID')['ECO_NAME'].to_dict()
 
@@ -212,7 +212,7 @@ def plot_mean_iqr(filein, fileout):
     plt.savefig('/Users/heatherkay/q_research/change/fig.pdf')
     
 #short section of code to obtain annual mean of height data
-filein = '/Users/heatherkay/q_research/change/test_year/2007.shp'
+#filein = '/Users/heatherkay/q_research/change/test_year/2007.shp'
 df = gpd.read_file(filein)
 height = df['i_h100']
 mean = height.mean()
