@@ -211,15 +211,6 @@ def plot_mean_iqr(filein, fileout):
     #ax.set_ylim([0,1])
     plt.savefig('/Users/heatherkay/q_research/change/fig.pdf')
     
-#short section of code to obtain annual mean of height data
-#filein = '/Users/heatherkay/q_research/change/test_year/2007.shp'
-#df = gpd.read_file(filein)
-#height = df['i_h100']
-#mean = height.mean()
-#deg_free = len(height)
-#print(mean)
-#print(deg_free)
-
 
 def plot_grid_per_annum(folderin, folderout):
     """
@@ -428,8 +419,30 @@ def get_laser_period(folderin, folderout):
         else:
             print('ph3_' + grid)        
         
-           
+def merge_phase_dfs(folderin, folderout):
+    """
+    Function to merge phase shapefiles produced with 'get_laser_period' in 
+    preparation for 'mean_per_phase'
+    
+    Parameters
+    ----------
+    
+    folderin: string
+            Filepath for folder with files ready for merging
 
+    folderout: string
+           Filepath for for folder to contain merged files       
+    """           
+    phases = ['ph1', 'ph2a', 'ph2b', 'ph3']
+    
+    for phase in phases:
+        fileList = glob.glob(folderin + phase + '*.shp')
+        dfList = [gpd.read_file(d) for d in fileList]
+    
+        df = pd.concat(dfList)  
+        df.to_file(folderout + phase + '.shp')
+        
+        
 def mean_per_phase(folderin, fileout):
     """
     Function to obtain average height and average cd per Laser period
@@ -456,29 +469,11 @@ def mean_per_phase(folderin, fileout):
         name = tl.replace('.shp', "")
         
 
-        test2 = df[df['i_h100']>=0] 
+        final = df[df['i_h100']>=0] 
         footprints = len(df['i_h100'])
         #means x is just the h100 data - needs logging to normalise (not skewed) 
-        x = test2['i_h100']
+        #x = test2['i_h100']
             
-        #create new column in df with log of H_100 
-        y = np.log(x)
-        test2a = test2.assign(log_i_h100 = y)
-            
-        if test2a.empty:
-            continue
-
-        #get quantiles
-        a = np.quantile(test2a['log_i_h100'],0.95)
-        b = np.quantile(test2a['log_i_h100'],0.05)
-
-        #remove data outside of 5% quantiles
-        test3 = test2a[test2a.log_i_h100 >b]
-        final = test3[test3.log_i_h100 <a]
-
-        if final.empty:
-            continue
-        del a, b, x, y, test2, test2a, test3
     
         #NEXT STEP. Bin remaining data in order to get mean and IQR of each bin
 
