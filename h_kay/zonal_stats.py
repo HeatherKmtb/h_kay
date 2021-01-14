@@ -18,9 +18,12 @@ from rasterstats import zonal_stats
 #raster = '/scratch/a.hek4/ESACCI-LC-L4-LCCS-Map-300m-P5Y-2010-v1.6.1.tif'
 
 # For calculating zonal statistics
-def get_zonal_stats(vector, raster, fileout, stats):
-    result = zonal_stats(vector, raster, stats=stats, geojson_out=True)
-    geostats = geopandas.GeoDataFrame.from_features(result)
-    geostats.to_file(fileout)
+def get_zonal_stats(vectorfile, raster, fileout, stats):
+    beams = ['0000','0001','0010','0011','0101','0110','1000','1011']
+    for beam in beams:
+        vecor = geopandas.read_file(vectorfile, layer=beam)
+        result = zonal_stats(vector, raster, stats=stats, geojson_out=True)
+        geostats = geopandas.GeoDataFrame.from_features(result)
+        geostats.to_file(fileout, 'output.gpkg', layer = beam, driver='GPKG')
 
 
