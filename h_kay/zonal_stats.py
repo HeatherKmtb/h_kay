@@ -18,9 +18,9 @@ from rasterstats import zonal_stats
 #raster = '/scratch/a.hek4/ESACCI-LC-L4-LCCS-Map-300m-P5Y-2010-v1.6.1.tif'
 
 # For calculating zonal statistics
-def get_zonal_stats(vector, raster, stats):
+def get_zonal_stats(vector, raster, stats, fileout):
     result = zonal_stats(vector, raster, stats=stats, geojson_out=True)
     geostats = geopandas.GeoDataFrame.from_features(result)
-    return geostats
+    geostats.to_file(fileout)
 
 
