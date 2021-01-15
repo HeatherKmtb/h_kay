@@ -25,6 +25,7 @@ def get_zonal_stats(vectorfile, raster, fileout, stats):
         vector = geopandas.read_file(vectorfile, layer=beam)
         result = zonal_stats(vector, raster, stats=stats, geojson_out=True)
         geostats = geopandas.GeoDataFrame.from_features(result)
-        geostats.to_file(fileout, layer = beam, driver='GPKG')
+    
+        geostats.to_file(fileout + "test.gpkg", layer = beam, driver='GPKG')
 
 
