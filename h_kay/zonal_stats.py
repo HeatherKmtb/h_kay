@@ -19,7 +19,8 @@ from rasterstats import zonal_stats
 
 # For calculating zonal statistics
 def get_zonal_stats(vectorfile, raster, fileout, stats):
-    beams = ['0000','0001','0010','0011','0101','0110','1000','1011']
+    beams = ['BEAM0000','BEAM0001','BEAM0010','BEAM0011','BEAM0101','BEAM0110',
+             'BEAM1000','BEAM1011']
     for beam in beams:
         vector = geopandas.read_file(vectorfile, layer=beam)
         result = zonal_stats(vector, raster, stats=stats, geojson_out=True)
