@@ -9,6 +9,7 @@ Created on Fri Jan  8 10:25:49 2021
 import geopandas
 from rasterstats import zonal_stats
 import glob
+import os.path
 
 #gedi = '/Users/heatherkay/q_res/test/GEDI02_B_2019275183438_O04563_T02081_02_001_01_1.gpkg'
 #vector = geopandas.read_file(gedi, layer='BEAM0000')
