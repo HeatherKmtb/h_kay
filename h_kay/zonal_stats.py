@@ -27,7 +27,7 @@ def get_zonal_stats(folderin, raster, fileout, stats):
     filelist = glob.glob(folderin + '*.gpkg')
     
     for vectorfile in filelist:
-        name = os.path.splitext(os.path.basename(file))[0]
+        name = os.path.splitext(os.path.basename(vectorfile))[0]
         for beam in beams:
             vector = geopandas.read_file(vectorfile, layer=beam)
             result = zonal_stats(vector, raster, stats=stats, geojson_out=True)
