@@ -16,7 +16,8 @@ def join_shps(folderin, folderout):
     
     
     """
-    grid = np.arange(0, 1001, 1 )
+    grid = np.arange(1, 1001, 1)
+    grid = grid.astype(str)
     for i in grid:
-        fileList = glob.glob(folderin + 'gla14_file' + grid + '_join*.*')
-        rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(grid))
+        fileList = glob.glob(folderin + 'gla14_file' + i + '_join*.shp')
+        rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(i))
