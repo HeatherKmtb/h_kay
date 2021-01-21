@@ -36,3 +36,14 @@ def get_zonal_stats(folderin, raster, fileout, stats):
             geostats.to_file(fileout + name + ".gpkg", layer = beam, driver='GPKG')
 
 
+def get_zonal_stats_shp(folderin, raster, fileout, stats):
+    
+    filelist = glob.glob(folderin + '*.shp')
+    
+    for vectorfile in filelist:
+        name = os.path.splitext(os.path.basename(vectorfile))[0]
+
+        vector = geopandas.read_file(vectorfile)
+        result = zonal_stats(vector, raster, stats=stats, geojson_out=True)
+        geostats = geopandas.GeoDataFrame.from_features(result)
+        geostats.to_file(fileout + name + ".shp")
