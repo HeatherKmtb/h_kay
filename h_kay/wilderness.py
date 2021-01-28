@@ -8,6 +8,7 @@ Created on Thu Jan 28 09:00:13 2021
 
 import geopandas as gpd
 import glob
+from os import path
 
 
 def sort_wilderness_shps(folderin, folderout):
