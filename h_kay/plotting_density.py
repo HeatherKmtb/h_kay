@@ -20,7 +20,7 @@ from scipy.stats import gaussian_kde
 
       
 
-def grid2(folderin, fileout, folderout, naming=3, eco_loc=2):
+def grid2(folderin, fileout, folderout, naming=4, eco_loc=2):
     """
     Function to compute q and provide results (csv) and figures (pdf)
     
