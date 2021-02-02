@@ -76,6 +76,8 @@ def gla14_join(filein, folderout, folderin):
         base_gpd_df = gpd.read_file(filename)
         base_gpd_df = base_gpd_df.set_geometry(col='geometry', crs="ESPG:4326")
         join_gpg_df = gpd.sjoin(base_gpd_df, join_gpg_df, how="inner", op="within")
+        if join_gpg_df.empty:
+            continue
         join_gpg_df.to_file(folderout, "{}_join.shp".format(basename))
         
 
