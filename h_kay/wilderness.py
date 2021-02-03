@@ -70,7 +70,7 @@ def gla14_join(filein, folderout, folderin):
     split_files = glob.glob(folderin + '*.shp')
 
     join_gpg_df = gpd.read_file(filein)
-    join_gpg_df = join_gpg_df.set_crs(crs="EPSG:4326")
+    join_gpg_df = join_gpg_df.to_crs(crs="EPSG:4326")
 
     for filename in split_files:
         basename = os.path.splitext(os.path.basename(filename))[0]
