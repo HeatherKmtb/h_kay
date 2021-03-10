@@ -51,7 +51,7 @@ def grid2(folderin, fileout, folderout, naming=4, eco_loc=2):
     fileList = glob.glob(folderin + '*.shp')
 
     #create df for results
-    resultsa = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'rmse','r_sq_mean', 'adj_r2'])
+    resultsa = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'mse','r_sq_mean', 'adj_r2'])
     #resultsb = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'rmse'])
 
     for file in fileList:
@@ -195,7 +195,7 @@ def grid2(folderin, fileout, folderout, naming=4, eco_loc=2):
         #extract info: eco, qout, r_sq, deg_free (only gets one eco in data)
         resultsa = resultsa.append({'eco': eco, 'ID': name, 'qout': qout, 
                                     'r_sq': r_sq, 'deg_free': footprints, 
-                                    'rmse': rms, 'r_sq_mean': r_sq_mean, 
+                                    'mse': mse, 'r_sq_mean': r_sq_mean, 
                                     'adj_r2': adj_r2}, ignore_index=True)
         #if deg_free>=60:
             #resultsb = resultsb.append({'eco': name2, 'ID': name, 'qout': qout, 'r_sq': r_sq, 'deg_free': deg_free, 'rmse': rms}, ignore_index=True)        
@@ -238,7 +238,7 @@ def grid2(folderin, fileout, folderout, naming=4, eco_loc=2):
         #adding qout, r_sq and deg_free to plot
         #ax.annotate('adj_r2 = ' + str(adj_r2[0]), xy=(0.975,0.10), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
         ax.annotate('q = ' + str(qout[0]), xy=(0.975,0.15), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
-        ax.annotate(u'R\u0305'u'\u00b2 = ' + str(adj_r2), xy=(0.975,0.10), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
+        ax.annotate('mean squared error = ' + str(mse), xy=(0.975,0.10), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
         #ax.annotate(u'R\u0305'u'\u00b2 of the mean = ' + str(r_sq_mean),xy=(0.975,0.10), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')   
         ax.annotate('No of footprints = ' + str(footprints),xy=(0.975,0.05), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
         plt.savefig(folderout + 'fig{}_{}.pdf'.format(eco, name))
