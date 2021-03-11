@@ -282,7 +282,7 @@ def grid_test(folderin, fileout, folderout, naming=4, eco_loc=2):
     fileList = glob.glob(folderin + '*.shp')
 
     #create df for results
-    resultsa = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'deg_free', 'mse', 'join', 'q'])
+    resultsa = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'deg_free', 'mse', 'join'])
     #resultsb = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'rmse'])
 
     for file in fileList:
@@ -351,13 +351,10 @@ def grid_test(folderin, fileout, folderout, naming=4, eco_loc=2):
         #j_g = name.astype(str)
         join = eco + '_' + name
         
-        q2 = qout
-        q1 = q2.astype(str)
-        q = q1.str.strip('[]').astype(float)
-        
+       
         resultsa = resultsa.append({'eco': eco, 'ID': name, 'qout': qout, 
                                     'deg_free': footprints, 
-                                    'mse': mse, 'join': join, 'q': q}, 
+                                    'mse': mse, 'join': join}, 
                                     ignore_index=True)
 
         resultsa.to_csv(fileout)
