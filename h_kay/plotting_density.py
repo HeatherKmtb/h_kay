@@ -347,9 +347,9 @@ def grid_test(folderin, fileout, folderout, naming=4, eco_loc=2):
         mse = mean_squared_error(y, y_predict)
         mse = round(mse, 3)
         
-        j_e = eco.astype(str)
-        j_g = name.astype(str)
-        join = j_e + '_' + j_g
+        #j_e = eco.astype(str)
+        #j_g = name.astype(str)
+        join = eco + '_' + name
         
         q1 = qout.astype(str)
         q = q1.str.strip('[]').astype(float)
