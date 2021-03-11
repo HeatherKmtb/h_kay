@@ -351,7 +351,8 @@ def grid_test(folderin, fileout, folderout, naming=4, eco_loc=2):
         #j_g = name.astype(str)
         join = eco + '_' + name
         
-        q1 = qout.astype(str)
+        q2 = qout
+        q1 = q2.astype(str)
         q = q1.str.strip('[]').astype(float)
         
         resultsa = resultsa.append({'eco': eco, 'ID': name, 'qout': qout, 
