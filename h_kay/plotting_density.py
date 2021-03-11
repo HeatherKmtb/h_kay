@@ -282,7 +282,7 @@ def grid_test(folderin, fileout, folderout, naming=4, eco_loc=2):
     fileList = glob.glob(folderin + '*.shp')
 
     #create df for results
-    resultsa = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'mse','r_sq_mean', 'adj_r2'])
+    resultsa = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'deg_free', 'mse', 'join', 'q'])
     #resultsb = pd.DataFrame(columns = ['eco', 'ID', 'qout', 'r_sq', 'deg_free', 'rmse'])
 
     for file in fileList:
@@ -305,22 +305,23 @@ def grid_test(folderin, fileout, folderout, naming=4, eco_loc=2):
         
         #create new column in df with log of H_100 
         y = np.log(x)
-        test3 = test2.assign(log_i_h100 = y)
+        test2a = test2.assign(log_i_h100 = y)
         
-        if test3.empty:
+        if test2a.empty:
             continue
 
         #get quantiles
-        a = np.quantile(test3['log_i_h100'],0.95)
-        #b = np.quantile(test2a['log_i_h100'],0.05)
+        a = np.quantile(test2a['log_i_h100'],0.95)
+        b = np.quantile(test2a['log_i_h100'],0.05)
 
         #remove data outside of 5% quantiles
-        #test3 = test2a[test2a.log_i_h100 >b]
+        test3 = test2a[test2a.log_i_h100 >b]
         final = test3[test3.log_i_h100 <a]
 
         if final.empty:
             continue
-        del a, x, y, test2, test3
+        del a, b, x, y, test2, test2a, test3
+
 
         footprints = len(final['i_h100'])
         
@@ -344,10 +345,19 @@ def grid_test(folderin, fileout, folderout, naming=4, eco_loc=2):
         from sklearn.metrics import mean_squared_error
 
         mse = mean_squared_error(y, y_predict)
-
+        mse = round(mse, 3)
+        
+        j_e = eco.astype(str)
+        j_g = name.astype(str)
+        join = j_e + '_' + j_g
+        
+        q1 = qout.astype(str)
+        q = q1.str.strip('[]').astype(float)
+        
         resultsa = resultsa.append({'eco': eco, 'ID': name, 'qout': qout, 
                                     'deg_free': footprints, 
-                                    'mse': mse}, ignore_index=True)
+                                    'mse': mse, 'join': join, 'q': q}, 
+                                    ignore_index=True)
 
         resultsa.to_csv(fileout)
 
@@ -358,7 +368,7 @@ def grid_test(folderin, fileout, folderout, naming=4, eco_loc=2):
         ax.scatter(x, y, c=z, s=10, edgecolor='')
         plt.rcParams.update({'font.size':12}) 
 
-        ax.set_title('Grid square within' + eco_name)
+        ax.set_title('Grid square within ' + eco_name)
         ax.set_ylabel('Canopy Density')
         ax.set_xlabel('Height - h100 (m)')
         ax.set_xlim([0, 60])
