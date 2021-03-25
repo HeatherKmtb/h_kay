@@ -12,7 +12,8 @@ from multiprocessing import Pool
 import geopandas as gpd
 from joblib import Parallel, delayed
 from functools import reduce
-
+import rsgislib.vectorutils
+import numpy as np
 
 def gla14_join(filein, folderout, folderno):
     """
@@ -177,5 +178,28 @@ def another_bleddy_join(folderin, folderout, col_nm='id'):
         oot = os.path.join(folderout, "{}_{}.shp".format(basename, id_name))
         df.to_file(oot)    
         
+def join_shps_grid_5deg(folderin, folderout):
+    """
+    joins all data from shape files in list based on item in filename
+    
+    
+    """
+    grid = np.arange(1, 1001, 1)
+    grid = grid.astype(str)
+    for i in grid:
+        fileList = glob.glob(folderin + 'gla14_file' + i + '_join*.shp')
+        rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(i))
+
+def join_shps_grid_1deg(folderin, folderout):
+    """
+    joins all data from shape files in list based on item in filename
+    
+    
+    """
+    grid = np.arange(1, 22411, 1)
+    grid = grid.astype(str)
+    for i in grid:
+        fileList = glob.glob(folderin + 'gla14_file*_join_eco_' + i + '.shp')
+        rsgislib.vectorutils.mergeShapefiles(fileList, folderout + 'gla14_grid_{}.shp'.format(i))
 
             

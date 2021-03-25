@@ -8,7 +8,7 @@ Created on Tue Jan 28 16:22:47 2020
 
 import geopandas as gpd
 import glob
-from os import path
+import os
 import numpy as np
 import pandas as pd
 
@@ -30,7 +30,7 @@ def prep_clim(folderin, folderout):
     remove = [np.nan, np.inf, -np.inf]
     
     for file in fileList:
-        hd, tl = path.split(file)
+        hd, tl = os.path.split(file)
         name = tl.replace('.shp', "")
         print(name)
         df = gpd.read_file(file)
@@ -79,4 +79,32 @@ def clim_var(filein, fileout):
     
     results.to_csv(fileout)
       
+def rnd_clim(folderin, folderout, roundto, column='b1', dec=0):
+    """
+    Function to round values in one column of shapefile
+    
+    folderin: string
+            Filepath for folder containing shapefiles
+            
+    folderin: string
+            Filepath for folder for new shapefiles
+
+    roundto: integer
+           value to round to nearest...
+           
+    column: string
+          column title to round. Default = 'b1'
+
+    dec: integer
+            number of decimal points to retain. Default = 0            
+    """
+    fileList = glob.glob(folderin + '*_eco_*.shp')
+    print(fileList)
+    for filename in fileList:
+        basename = os.path.splitext(os.path.basename(filename))[0]
+        df = gpd.read_file(filename) 
+        clim1 = df[column].astype(float)
+        clim = np.around(clim1/roundto, decimals=dec)
+        df2 = df.assign(clim=clim)
+        df2.to_file(folderout + '{}.shp'.format(basename))
 

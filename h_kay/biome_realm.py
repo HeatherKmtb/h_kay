@@ -6,14 +6,6 @@ Created on Mon Sep 28 14:04:38 2020
 @author: heatherkay
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Sep  4 15:06:51 2020
-
-@author: heatherkay
-"""
-
 
 import pandas as pd
 import numpy as np
@@ -142,7 +134,7 @@ def hist_seaborn_realm(filein, folderout, column, xlab, ylab, title):
     fig1 = fig1.get_figure()
     fig1.savefig(folderout + title + '.png')
 
-def hist_seaborn_biomes(filein, folderout, title):
+def hist_seaborn_biomes(filein, folderout, title, column = 'r_sq'):
     """
     Function to plot histogram with seaborn
     
@@ -186,37 +178,37 @@ def hist_seaborn_biomes(filein, folderout, title):
     df13 = df.loc[df['biome']== 13]
     df14 = df.loc[df['biome']== 14]
 
-    plot01 = df01['r_sq']
-    plot02 = df02['r_sq']
-    plot03 = df03['r_sq']
-    plot04 = df04['r_sq']
-    plot05 = df05['r_sq']
-    plot06 = df06['r_sq']
-    plot07 = df07['r_sq']
-    plot08 = df08['r_sq']
-    plot09 = df09['r_sq']
-    plot10 = df10['r_sq']
-    plot11 = df11['r_sq']
-    plot12 = df12['r_sq']
-    plot13 = df13['r_sq']
-    plot14 = df14['r_sq']
+    plot01 = df01[column]
+    plot02 = df02[column]
+    plot03 = df03[column]
+    plot04 = df04[column]
+    plot05 = df05[column]
+    plot06 = df06[column]
+    plot07 = df07[column]
+    plot08 = df08[column]
+    plot09 = df09[column]
+    plot10 = df10[column]
+    plot11 = df11[column]
+    plot12 = df12[column]
+    plot13 = df13[column]
+    plot14 = df14[column]
     
     fig1 = seaborn.distplot(plot01, label='TST Moist broadleaf') 
-    fig1 = seaborn.distplot(plot02, label = 'TST Dry broadleaf')
-    fig1 = seaborn.distplot(plot03, label = 'TST Conifer')
+    #fig1 = seaborn.distplot(plot02, label = 'TST Dry broadleaf')
+    #fig1 = seaborn.distplot(plot03, label = 'TST Conifer')
     fig1 = seaborn.distplot(plot04, label='Temperate Broadleaf') 
     fig1 = seaborn.distplot(plot05, label = 'Temperate Conifer')
-    fig1 = seaborn.distplot(plot06, label = 'Boreal/Taiga')
+   # fig1 = seaborn.distplot(plot06, label = 'Boreal/Taiga')
     fig1 = seaborn.distplot(plot07, label='TST Savanna') 
     fig1 = seaborn.distplot(plot08, label = 'Temperate Savanna')
-    fig1 = seaborn.distplot(plot09, label = 'Flooded Savanna')
-    fig1 = seaborn.distplot(plot10, label='Montane Shrublands') 
-    fig1 = seaborn.distplot(plot11, label = 'Tundra')
-    fig1 = seaborn.distplot(plot12, label = 'Mediterranean')
-    fig1 = seaborn.distplot(plot13, label='Deserts') 
+    #fig1 = seaborn.distplot(plot09, label = 'Flooded Savanna')
+    #fig1 = seaborn.distplot(plot10, label='Montane Shrublands') 
+    #fig1 = seaborn.distplot(plot11, label = 'Tundra')
+    #fig1 = seaborn.distplot(plot12, label = 'Mediterranean')
+    #fig1 = seaborn.distplot(plot13, label='Deserts') 
     fig1 = seaborn.distplot(plot14, label = 'Mangroves')
 
-    plt.xlabel('adjusted R squared')
+    plt.xlabel('maxCD')
     plt.ylabel('frequency')
     plt.legend()
     #plt.title('Savanna')
@@ -249,6 +241,9 @@ def obtain_means(filein, fileout, col):
     biome=df['join'].str[1:3]
     df['realm'] = realm
     df['biome'] = biome
+    
+    df.drop_duplicates(subset ='join', 
+                     inplace = True) 
     
     biomes = list(np.unique(df['biome']))
     realms = list(np.unique(df['realm']))
@@ -320,9 +315,10 @@ def descriptive_stats(filein, fileout):
         if length <4:
             continue
 
-        results = results.append({'category': b, 'df':deg_free, 'q_mean':meanq, 'q_median':medianq, 'var_q':varq, 'std_q':stdq,
-                        'q_shap':p_q, 'mse_mean':meanr2, 'mse_median':medianr2, 'var_mse':varr2, 
-                        'mse_shap':p_r2, 'std_mse':stdr2}, ignore_index=True)
+        results = results.append({'category': b, 'df':deg_free, 'q_mean':meanq, 
+                                  'q_median':medianq, 'var_q':varq, 'std_q':stdq,
+                                  'mse_mean':meanr2, 'mse_median':medianr2, 
+                                  'var_mse':varr2, 'std_mse':stdr2}, ignore_index=True)
         
     for r in realms:    
         dfb = df.loc[df['realm']==r]
@@ -451,7 +447,74 @@ def create_combo_csvs(folderin, folderout):
                 continue
             new.to_csv(folderout + name + '_realm_{}.csv'.format(r))
         
+def max_and_mins(filein, fileout):
+    """
+    Function to output descriptive stats per biome and realm
     
+    Parameters
+    ----------
+    filein: string
+          Filepath for dataframe to use for plotting
+          
+    fileout: string
+           Filepath to save plot    
+    """
+    #filein = '/Users/heatherkay/q_res/biomes/final_q.csv'
+    #fileout =  '/Users/heatherkay/q_res/biomes/decriptive_stats3.csv'
+
+    df = pd.read_csv(filein)
+    df['join']=df['join'].astype(str)
+    realm=df['join'].str[:1]
+    biome=df['join'].str[1:3]
+    df['realm'] = realm
+    df['biome'] = biome
+    df.drop_duplicates(subset ='join', 
+                     inplace = True) 
+    
+    df['biome']=df['biome'].astype(int)
+    df = df[df.realm != '-']
+    df['realm']=df['realm'].astype(int) 
+           
+    biomes = list(np.unique(df['biome']))
+    realms = list(np.unique(df['realm']))
+    
+    results=pd.DataFrame(columns=['category', 'df', 'cd_max', 'cd_min','h_max','h_min'])
+    
+    for b in biomes:
+        dfb = df.loc[df['biome']==b]
+        deg_free = len(dfb['cd'])
+        q = dfb['cd']
+        r2 = dfb['height']
+        maxcd = q.max()
+        maxh = r2.max()
+        mincd = q.min()
+        minh = r2.min()
+        
+        length = len(r2)
+        if length <4:
+            continue
+
+        results = results.append({'category': b, 'df':deg_free, 'cd_max':maxcd,
+                                  'cd_min':mincd, 'h_max':maxh, 'h_min': minh}, ignore_index=True)
+        
+    for r in realms:    
+        dfb = df.loc[df['realm']==r]
+        deg_free = len(dfb['cd'])
+        q = dfb['cd']
+        r2 = dfb['height']
+        maxcd = q.max()
+        maxh = r2.max()
+        mincd = q.min()
+        minh = r2.min()
+       
+        length = len(r2)
+        if length <4:
+            continue
+
+        results = results.append({'category': r, 'df':deg_free, 'cd_max':maxcd,
+                                  'cd_min':mincd, 'h_max':maxh, 'h_min': minh}, ignore_index=True)     
+
+    results.to_csv(fileout)    
 
 """            
 not a function, manual plotting of histograms for investigation
