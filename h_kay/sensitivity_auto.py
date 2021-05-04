@@ -11,7 +11,7 @@ from scipy.optimize import fsolve
 import numpy as np
 import pandas as pd
 
-filein = '/Users/heatherkay/q_res/sensitivity/grid_squares_s1_20200704.csv'
+filein = '/Users/heatherkay/q_res/sensitivity/new_grid_squares_20210329.csv'
 
 df = pd.read_csv(filein)
 
@@ -33,7 +33,7 @@ for i, row in df.iterrows():
     p1 = row['p1']
     p2 = row['p2']
     alpha = 0.46
-    q= row['my_q']
+    q= row['q']
     sdq = row['std']
     q_min = q - (sdq*2)
     q_max = q + (sdq*2)
@@ -60,6 +60,6 @@ for i, row in df.iterrows():
         ax.set_ylabel = 'Sigma_for'
         plt.plot(x,y)
     
-        plt.savefig('/Users/heatherkay/q_res/sensitivity/figs/E{}_N{}.pdf'.format(E,N))
+        plt.savefig('/Users/heatherkay/q_res/sensitivity/new_figs/E{}_N{}.pdf'.format(E,N))
         plt.close
    
