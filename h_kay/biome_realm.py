@@ -310,6 +310,10 @@ def descriptive_stats(filein, fileout):
         varr2 = r2.var()
         stdq = q.std()
         stdr2 = r2.std()
+        maxq = q.max()
+        minq = q.min()
+        maxmse = r2.max()
+        minmse = r2.min()
         
         length = len(r2)
         if length <4:
@@ -318,7 +322,9 @@ def descriptive_stats(filein, fileout):
         results = results.append({'category': b, 'df':deg_free, 'q_mean':meanq, 
                                   'q_median':medianq, 'var_q':varq, 'std_q':stdq,
                                   'mse_mean':meanr2, 'mse_median':medianr2, 
-                                  'var_mse':varr2, 'std_mse':stdr2}, ignore_index=True)
+                                  'var_mse':varr2, 'std_mse':stdr2, 'q_max':maxq,
+                                  'q_min':minq, 'mse_max':maxmse, 
+                                  'mse_min':minmse}, ignore_index=True)
         
     for r in realms:    
         dfb = df.loc[df['realm']==r]
