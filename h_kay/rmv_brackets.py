@@ -38,11 +38,16 @@ def rmv_brackets(filepath, fileout, column='qout'):
 
     df3.to_csv(fileout)
     
-    #return df3 
+     
+def create_join_col(filein, fileout):
+    df = pd.read_csv(filein)
+    grid = df['ID'].astype(str)
+    eco = df['eco'].astype(str)
+    join = eco + '_' + grid
+    df['join']=join
+    df.to_csv(fileout)
+    
 
-
-# filepath = ('/Users/heatherkay/Desktop/MPhil/final_results_19.12/w.csv')
-# fileout = ('/Users/heatherkay/Desktop/MPhil/final_results_19.12/w.csv')
  
 
         
