@@ -60,6 +60,6 @@ for i, row in df.iterrows():
         ax.set_ylabel = 'Sigma_for'
         plt.plot(x,y)
     
-        plt.savefig('/Users/heatherkay/q_res/sensitivity/new_figs/E{}_N{}.pdf'.format(E,N))
+        plt.savefig('/Users/heatherkay/q_res/sensitivity/figs/E{}_N{}.pdf'.format(E,N))
         plt.close
    
