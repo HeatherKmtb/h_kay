@@ -84,6 +84,7 @@ def grid_only(folderin, fileout, folderout, naming=3):
         print(name)
         #print(eco)
         HBins = list(np.unique(final['H_bins']))
+        print(HBins)
         for bins in HBins:
             #for each one make a df with just that bin
             new = final.loc[final['H_bins']==bins]
