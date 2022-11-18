@@ -14,6 +14,7 @@ from scipy.optimize import curve_fit
 import geopandas as gpd
 import glob
 from os import path
+from scipy.stats import gaussian_kde
 
 
 def grid_only(folderin, fileout, folderout, naming=3):
@@ -70,59 +71,6 @@ def grid_only(folderin, fileout, folderout, naming=3):
         if footprints < 100:
             continue
         
-        #NEXT STEP. Bin remaining data in order to get mean and IQR of each bin
-
-        #add column with bins 
-        final['H_bins']=pd.cut(x=final['i_h100'], bins=np.arange(0, 120+2, 2))
-
-        #now something along the lines of:
-        #for bin in HBins find the mean and IQR...
-        #first create lists to append mean and IQRs to
-        cd_mean = []
-        cd_iqr = []
-        #Hbin = []
-        print(name)
-        #print(eco)
-        HBins = list(np.unique(final['H_bins']))
-        print(HBins)
-        for bins in HBins:
-            #for each one make a df with just that bin
-            new = final.loc[final['H_bins']==bins]
-            #get mean and IQR of each bin
-            data = new['i_cd'].to_numpy()
-            mean = data.mean()
-            cd_mean.append(mean)
-            q75, q25 = np.percentile (data, [75, 25])
-            iqr = q75 - q25
-            cd_iqr.append(iqr)
-    
-        #getting median of bins for mean r2 calculation
-        greats = []
-        for index,i in final.iterrows():
-            great = [i['H_bins'].left + 1] 
-            greats.append(great)
-
-    
-        final['H_bin'] = greats 
-        new1 = final['H_bin'] = final.H_bin.astype(str)
-        new2 = new1.str.strip('[]').astype(int)
-        final['H_bin1'] = new2
-        
-        del new, data, q75, q25, new1 
-    
-        #get median of bins for plotting
-        med = [binn.left + 1 for binn in HBins]
-        plot = pd.DataFrame({'mean': cd_mean, 'iqr': iqr, 'bins': HBins, 'median': med})
-        bin_dict = plot.set_index('median')['mean'].to_dict()
-    
-        plot_y = []
-        for i in final['H_bin1']:
-            y = bin_dict[i]
-            plot_y.append(y)
-            del y
-        
-        final['plot_y'] = plot_y
-     
         #regression 
         def f(x,q):
             return 1- np.exp(-q * x)
@@ -134,13 +82,7 @@ def grid_only(folderin, fileout, folderout, naming=3):
     
         qout, qcov = curve_fit(f, x, y, 0.04)
         qout = qout.round(decimals=4)
-        #calculating mean r2
-        residuals = plot_y - f(new2, qout)
-        res_ss = np.sum(residuals**2)
-        tot_ss = np.sum((plot_y-np.mean(plot_y))**2)
-        r_sq_mean = 1 - (res_ss/tot_ss)
-        #deg_free = (len(x)-1)
-        r_sq_mean = round(r_sq_mean, 2)
+
         y_predict = f(x, qout)
         
         #calculating r2
@@ -174,12 +116,13 @@ def grid_only(folderin, fileout, folderout, naming=3):
             #resultsb.to_csv('./eco/new/results/results_over60.csv')
 
         #plot the result
-        fig = plt.figure(); ax = fig.add_subplot(1,1,1)
-        plt.rcParams.update({'font.size':12})
-        #plots H_100 on x with I_CD on y
-        ax.scatter(plot['median'],plot['mean'])
-        #plots IQR
-        ax.bar(plot['median'],plot['mean'],width=0, yerr=plot['iqr'])
+        xy = np.vstack([x,y])
+        z = gaussian_kde(xy)(xy)
+
+        fig, ax = plt.subplots()
+        ax.scatter(x, y, c=z, s=10, edgecolor='')
+        plt.rcParams.update({'font.size':12}) 
+
         #sets title and axis labels
         ax.set_title('Grid no.' + name)
         ax.set_ylabel('Canopy Density')
