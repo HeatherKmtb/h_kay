@@ -33,21 +33,46 @@ def grid_naming(folderin, folderout):
         lon = df.geometry[0].x
         lat = df.geometry[0].y
 
-        new_lon = math.floor(lon)
-        new_lat = math.ceil(lat)
-
-        if new_lon <0:
-             posit = abs(new_lon)
-             name_lon = 'W' + str(posit)
+        new_long = math.floor(lon)
+        new_lati = math.ceil(lat)
+      
+        if new_long <0:
+             pos1 = abs(new_long)
+             pos = str(pos1)
+             if len(pos) == 1:
+                 posit = '00' + pos
+             elif len(pos) == 2:
+                 posit = '0' + pos 
+             else:
+                 posit = pos
+             name_lon = 'W' + posit
+             
         else:
-             name_lon = 'E' + str(new_lon)
+            new_lon = str(new_long)
+            if len(new_lon) == 1:
+                long = '00' + new_lon
+            elif len(new_lon) == 2:
+                long = '0' + new_lon 
+            else: 
+                long = new_long
+            name_lon = 'E' + str(long)
     
-        if new_lat <0:
-            posi = abs(new_lat)
+        if new_lati <0:
+            po1 = abs(new_lati)
+            po = str(po1)
+            if len(po) == 1:
+                posi = '0' + po   
+            else:
+                posi = po
             name_lat = 'S' + str(posi)
         else:
-            name_lat = 'N' + str(new_lat)
-
+            new_lat = str(new_lati)
+            if len(new_lat) == 1:
+                 lati = '0' + new_lat 
+            else:
+                lati = new_lat
+            name_lat = 'N' + str(lati)
+            
         naming = name_lat + name_lon   
         
         df.to_file(folderout + 'gla14_grid_{}.shp'.format(naming))
