@@ -34,7 +34,7 @@ def stack_df (filein1, filein2, fileout):
 
 def stack_multi_df(folderin, fileout):
     """
-    A function which stacks data from two dataframes one aove the other
+    A function which stacks data from multiple dataframes above each other
     
     Parameters
     ----------

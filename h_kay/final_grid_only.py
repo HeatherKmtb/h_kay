@@ -62,7 +62,8 @@ def grid_only(folderin, fileout, folderout, naming=3):
         print(name)
         #print(eco)
         #remove data with H_100 >= 0 prior to logging
-        final = df[df['i_h100']>=0] 
+        df2 = df.dropna(subset=['i_h100'])
+        final = df2[df2['i_h100']>=0] 
         footprints = len(df['i_h100'])
         #means x is just the h100 data - needs logging to normalise (not skewed) 
 
