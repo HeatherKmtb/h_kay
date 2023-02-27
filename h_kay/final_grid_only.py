@@ -14,6 +14,7 @@ from scipy.optimize import curve_fit
 import geopandas as gpd
 import glob
 from os import path
+from scipy.stats import gaussian_kde
 
 
 def grid_only(folderin, fileout, folderout, naming=3):
@@ -71,59 +72,6 @@ def grid_only(folderin, fileout, folderout, naming=3):
         if footprints < 100:
             continue
         
-        #NEXT STEP. Bin remaining data in order to get mean and IQR of each bin
-
-        #add column with bins 
-        final['H_bins']=pd.cut(x=final['i_h100'], bins=np.arange(0, 120+2, 2))
-
-        #now something along the lines of:
-        #for bin in HBins find the mean and IQR...
-        #first create lists to append mean and IQRs to
-        cd_mean = []
-        cd_iqr = []
-        #Hbin = []
-        print(name)
-        #print(eco)
-        HBins = list(np.unique(final['H_bins']))
-        print(HBins)
-        for bins in HBins:
-            #for each one make a df with just that bin
-            new = final.loc[final['H_bins']==bins]
-            #get mean and IQR of each bin
-            data = new['i_cd'].to_numpy()
-            mean = data.mean()
-            cd_mean.append(mean)
-            q75, q25 = np.percentile (data, [75, 25])
-            iqr = q75 - q25
-            cd_iqr.append(iqr)
-    
-        #getting median of bins for mean r2 calculation
-        greats = []
-        for index,i in final.iterrows():
-            great = [i['H_bins'].left + 1] 
-            greats.append(great)
-
-    
-        final['H_bin'] = greats 
-        new1 = final['H_bin'] = final.H_bin.astype(str)
-        new2 = new1.str.strip('[]').astype(int)
-        final['H_bin1'] = new2
-        
-        del new, data, q75, q25, new1 
-    
-        #get median of bins for plotting
-        med = [binn.left + 1 for binn in HBins]
-        plot = pd.DataFrame({'mean': cd_mean, 'iqr': iqr, 'bins': HBins, 'median': med})
-        bin_dict = plot.set_index('median')['mean'].to_dict()
-    
-        plot_y = []
-        for i in final['H_bin1']:
-            y = bin_dict[i]
-            plot_y.append(y)
-            del y
-        
-        final['plot_y'] = plot_y
-     
         #regression 
         def f(x,q):
             return 1- np.exp(-q * x)
@@ -135,13 +83,7 @@ def grid_only(folderin, fileout, folderout, naming=3):
     
         qout, qcov = curve_fit(f, x, y, 0.04)
         qout = qout.round(decimals=4)
-        #calculating mean r2
-        residuals = plot_y - f(new2, qout)
-        res_ss = np.sum(residuals**2)
-        tot_ss = np.sum((plot_y-np.mean(plot_y))**2)
-        r_sq_mean = 1 - (res_ss/tot_ss)
-        #deg_free = (len(x)-1)
-        r_sq_mean = round(r_sq_mean, 2)
+
         y_predict = f(x, qout)
         
         #calculating r2
@@ -152,10 +94,8 @@ def grid_only(folderin, fileout, folderout, naming=3):
         r_sq = round(r_sq, 2)
             
         from sklearn.metrics import mean_squared_error
-        from math import sqrt
         mse = mean_squared_error(y, y_predict)
-        rms = sqrt(mse)
-        rms = round(rms, 4)
+        mse = round(mse, 3)
         
         meanh = np.mean(x)
         meancd = np.mean(y)
@@ -167,7 +107,10 @@ def grid_only(folderin, fileout, folderout, naming=3):
         #plt.close
         
         #extract info: eco, qout, r_sq, deg_free (only gets one eco in data)
-        resultsa = resultsa.append({'ID': name, 'qout': qout, 'r_sq': r_sq, 'deg_free': footprints, 'rmse': rms, 'mean_h': meanh, 'mean_cd': meancd, 'max_h': maxh}, ignore_index=True)
+        resultsa = resultsa.append({'ID': name, 'qout': qout, 'r_sq': r_sq, 
+                                    'deg_free': footprints, 'mse': mse, 
+                                    'mean_h': meanh, 'mean_cd': meancd, 
+                                    'max_h': maxh}, ignore_index=True)
         #if deg_free>=60:
             #resultsb = resultsb.append({'eco': name2, 'ID': name, 'qout': qout, 'r_sq': r_sq, 'deg_free': deg_free, 'rmse': rms}, ignore_index=True)        
             #export to excel
@@ -175,12 +118,13 @@ def grid_only(folderin, fileout, folderout, naming=3):
             #resultsb.to_csv('./eco/new/results/results_over60.csv')
 
         #plot the result
-        fig = plt.figure(); ax = fig.add_subplot(1,1,1)
-        plt.rcParams.update({'font.size':12})
-        #plots H_100 on x with I_CD on y
-        ax.scatter(plot['median'],plot['mean'])
-        #plots IQR
-        ax.bar(plot['median'],plot['mean'],width=0, yerr=plot['iqr'])
+        xy = np.vstack([x,y])
+        z = gaussian_kde(xy)(xy)
+
+        fig, ax = plt.subplots()
+        ax.scatter(x, y, c=z, s=10, edgecolor='')
+        plt.rcParams.update({'font.size':12}) 
+
         #sets title and axis labels
         ax.set_title('Grid no.' + name)
         ax.set_ylabel('Canopy Density')
@@ -197,8 +141,8 @@ def grid_only(folderin, fileout, folderout, naming=3):
         #adding qout, r_sq and deg_free to plot
         ax.annotate('q = ' + str(qout[0]), xy=(0.975,0.20), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
         ax.annotate('r2 = ' + str(r_sq), xy=(0.975,0.15), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
-        ax.annotate('RMSE = ' + str(rms),xy=(0.975,0.10), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')   
+        ax.annotate('MSE = ' + str(mse),xy=(0.975,0.10), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')   
         ax.annotate('No of footprints = ' + str(footprints),xy=(0.975,0.05), xycoords='axes fraction', fontsize=12, horizontalalignment='right', verticalalignment='bottom')
-        plt.savefig(folderout + 'fig{}.pdf'.format(name))
+        plt.savefig(folderout + 'fig{}.png'.format(name))
         plt.close
         

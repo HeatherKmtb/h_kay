@@ -59,7 +59,7 @@ def compare(gediin, icesatin, fileout, csv_out):
     ax.plot(z,z, color='red')
     ax.set_xlim([0,0.1])
     ax.set_ylim([0,0.1])
-    ax.set_title('GEDI v ICESat Q3 2020')
+    ax.set_title('GEDI v ICESat')
     ax.set_ylabel('ICESat q values')
     ax.set_xlabel('GEDI q values')
     plt.savefig(fileout)
@@ -200,7 +200,7 @@ def compare_cd_and_h_icesat(gediin, figs_out):
         """
         
         df = pd.read_csv(gediin)
-        g1 = 'ICESat v GEDI 2020 Q3' 
+        g1 = 'ICESat v GEDI' 
         q1 = 'GEDI'
         q2 = 'ICESat GLAS'
         
@@ -251,7 +251,78 @@ def compare_cd_and_h_icesat(gediin, figs_out):
         plt.savefig(h_fig_out)
         plt.close
         
+def compare_mse_gedi_v_icesat(gediin, figs_out):
+        """
+        A function which prepares 2 of the results dataframes, and produces a new
+        combined csv and a figure comparing q values.
         
+        Parameters
+        ----------
+        
+        gediin: string
+                 path to input csv file with gedi data already joined with 
+                 compare_gedis above
+                       
+        figs_out: string
+               path for folder to save figure with cd data
+               
+             
+        """
+        
+        df = pd.read_csv(gediin)
+        g1 = 'ICESat v GEDI' 
+        q1 = 'GEDI'
+        q2 = 'ICESat GLAS'
+        
+        mse_fig_out = figs_out + g1 + 'mse.png'
+        h_fig_out = figs_out + g1 + 'max_h.png'
+        
+        x= df['mse_g']
+        y= df['mse']
+        z=[0, 0.1]
+        
+        diff = x - y
+
+        new_df = df.assign(difference_mse = diff)
+        
+        fig, ax = plt.subplots()
+        ax.scatter(x, y, s=10)
+        ax.plot(z,z, color='red')
+        ax.set_xlim([0,0.1])
+        ax.set_ylim([0,0.1])
+
+        m, b = np.polyfit(x, y, 1)
+        plt.plot(x, m*x+b, color='black')
+        ax.set_title(g1)
+        ax.set_ylabel(q2 + ' mse values')
+        ax.set_xlabel(q1 + ' mse values')
+        plt.savefig(mse_fig_out)
+        plt.close
+        
+        x= df['max_h_g']
+        y= df['max_h']
+        z=[0, 200]
+        
+        diff = x - y
+
+        out_df = new_df.assign(diff_max_h = diff)
+        out_df.to_csv(figs_out + g1 + ' cd_h_mse.csv')
+        
+        fig, ax = plt.subplots()
+        ax.scatter(x, y, s=10)
+        ax.plot(z,z, color='red')
+        ax.set_xlim([0,200])
+        ax.set_ylim([0,200])
+        m, b = np.polyfit(x, y, 1)
+        plt.plot(x, m*x+b, color='black')
+        ax.set_title(g1 + 'maximum height values')
+        ax.set_ylabel(q2 + ' h values')
+        ax.set_xlabel(q1 + ' h values')
+        plt.savefig(h_fig_out)
+        plt.close        
+
+
+
 #Random code
 high_cd = df[df['mean_cd_g']>=0.6] 
 low_cd = df[df['mean_cd_g']<0.5] 
