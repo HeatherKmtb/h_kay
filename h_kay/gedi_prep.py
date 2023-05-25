@@ -31,7 +31,7 @@ def prepare_gedi_and_compare(gediin, glasin, fileout1, fileout2, column1, column
     
     df = pd.read_csv(gediin)
     df[join_column] = df[column1].astype(str) + '_' + df[column2].astype(str)
-    df1 = df['qout'] = df.qout.astype(str)
+    df1 = df['qout_gedi'] = df.qout_gedi.astype(str)
     df2 = df1.str.strip('[]').astype(float)
     df3 = df.assign(q = df2)
     df3.to_csv(fileout1)
