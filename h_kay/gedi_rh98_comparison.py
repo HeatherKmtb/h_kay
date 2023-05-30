@@ -9,7 +9,9 @@ Created on Wed May 24 08:17:18 2023
 import geopandas as gpd
 import pandas as pd
 import matplotlib.pyplot as plt
-
+from statistics import mean, stdev
+from math import sqrt
+import scipy.stats
 
 df1 = gpd.read_file('/Users/heatherkay/q_res/GEDI02_A_2020181231348_O08768_03_T05029_02_003_01_V002.gpkg',layer = 'BEAM0101')
 df2 = gpd.read_file('/Users/heatherkay/q_res/GEDI02_A_2020181231348_O08768_03_T05029_02_003_01_V002.gpkg',layer = 'BEAM0110')
@@ -29,7 +31,12 @@ rh100 = df_quality['rh_100']
 from scipy import stats as st
 st.ttest_ind(a=rh98, b=rh100, equal_var=True)
 
+#cohens d
+cohens_d = (mean(rh98) - mean(rh100)) / (sqrt((stdev(rh98) ** 2 + stdev(rh100) ** 2) / 2))
+print(cohens_d)
 
+#pearsons r
+scipy.stats.pearsonr(rh98,rh100)
 
 #scatterplot
 fig, ax = plt.subplots()
