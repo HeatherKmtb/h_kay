@@ -11,7 +11,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statistics import mean, stdev
 from math import sqrt
-import scipy.stats
+
 
 df1 = gpd.read_file('/Users/heatherkay/q_res/GEDI02_A_2020181231348_O08768_03_T05029_02_003_01_V002.gpkg',layer = 'BEAM0101')
 df2 = gpd.read_file('/Users/heatherkay/q_res/GEDI02_A_2020181231348_O08768_03_T05029_02_003_01_V002.gpkg',layer = 'BEAM0110')
@@ -36,7 +36,7 @@ cohens_d = (mean(rh98) - mean(rh100)) / (sqrt((stdev(rh98) ** 2 + stdev(rh100) *
 print(cohens_d)
 
 #pearsons r
-scipy.stats.pearsonr(rh98,rh100)
+st.pearsonr(rh98,rh100)
 
 #scatterplot
 fig, ax = plt.subplots()
