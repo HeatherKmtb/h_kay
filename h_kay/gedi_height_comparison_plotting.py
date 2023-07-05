@@ -29,11 +29,11 @@ for col in cols:
     df10 = df10.rename(columns={col:col + '_10m'})
     df12 = df12.rename(columns={col:col + '_12m'})
     
-new_id = 'gedi_' + df['Grid'].astype(str) + '_' + df['eco'].astype(str)
-df = df.assign(poly_id = new_id)
+# new_id = 'gedi_' + df['Grid'].astype(str) + '_' + df['eco'].astype(str)
+# df = df.assign(poly_id = new_id)
 
-new_id = 'gedi_' + df10['Grid'].astype(str) + '_' + df10['eco'].astype(str)
-df10 = df10.assign(poly_id = new_id)
+# new_id = 'gedi_' + df10['Grid'].astype(str) + '_' + df10['eco'].astype(str)
+# df10 = df10.assign(poly_id = new_id)
 
 new_id = 'gedi_' + df12['Grid'].astype(str) + '_' + df12['eco'].astype(str)
 df12 = df12.assign(poly_id = new_id)

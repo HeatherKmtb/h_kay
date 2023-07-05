@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from os import path
 import numpy as np
 
+
 #plot ICESat v GEDI results
 
 def compare(gediin, icesatin, fileout, csv_out):
@@ -33,8 +34,14 @@ def compare(gediin, icesatin, fileout, csv_out):
     df1 = pd.read_csv(gediin)
     df2 = pd.read_csv(icesatin)
 
-    res = df1.merge(df2, how='inner', on='Grid')
-    df1 = res['qout'] = res.qout.astype(str)
+    new_id1 = 'gedi_' + df1['Grid'].astype(str) + '_' + df1['eco'].astype(str)
+    df1 = df1.assign(poly_id = new_id1)
+
+    new_id2 = 'gedi_' + df2['Grid'].astype(str) + '_' + df2['eco'].astype(str)
+    df2 = df2.assign(poly_id = new_id2)
+
+    res = df1.merge(df2, how='inner', on='poly_id')
+    df1 = res['qout_glas'] = res.qout_glas.astype(str)
     df2 = df1.str.strip('[]').astype(float)
     df3 = res.assign(q_glas = df2)
     df4 = df3['qout_gedi'] = df3.qout_gedi.astype(str)
@@ -59,6 +66,7 @@ def compare(gediin, icesatin, fileout, csv_out):
     ax.plot(z,z, color='red')
     ax.set_xlim([0,0.1])
     ax.set_ylim([0,0.1])
+    #ax.axis('equal')
     ax.set_title('GEDI v ICESat')
     ax.set_ylabel('ICESat q values')
     ax.set_xlabel('GEDI q values')
@@ -321,7 +329,76 @@ def compare_mse_gedi_v_icesat(gediin, figs_out):
         plt.savefig(h_fig_out)
         plt.close        
 
+def compare_1km(gediin, figs_out):
+        """
+        A function which prepares 2 of the results dataframes, and produces a new
+        combined csv and a figure comparing q values.
+        
+        Parameters
+        ----------
+        
+        gediin: string
+                 path to input csv file with gedi data already joined with 
+                 compare_gedis above
+                       
+        figs_out: string
+               path for folder to save figure with cd data
+               
+             
+        """     
+  
+    gdf = pd.read_csv(gediin)
+    kmdf = pd.read_csv(kmin) 
+    
+   
+    cols = ['qout_gedi', 'deg_free_g', 'mse_g', 'mean_h_g',
+           'mean_cd_g']
+    
+    for col in cols:
+        kmdf = kmdf.rename(columns={col:col + '_km'})
+ 
+    name_comp = kmdf['Grid']
 
+    grid=[]
+    for i in name_comp: 
+        join = i.split('_')
+        name = join[1] 
+        grid.append(name)
+        
+    kmdf['Grid']=grid
+
+    
+    res = gdf.merge(kmdf, how='inner', on='Grid')
+    df1 = res['qout_gedi'] = res.qout_gedi.astype(str)
+    df2 = df1.str.strip('[]').astype(float)
+    df3 = res.assign(q_gedi = df2)
+    df4 = df3['qout_gedi_km'] = df3.qout_gedi_km.astype(str)
+    df5 = df4.str.strip('[]').astype(float)
+    df6 = df3.assign(q_km = df5)    
+    x= df6['mean_cd_g']
+    y= df6['mean_cd_g_km']
+    z=[0, 0.05, 1]
+    
+    diff = x - y
+    
+    #df7 = df6[df6['deg_free_g_x']>=100] 
+    #df8 = df7[df7['deg_free_g_y']>=100] 
+    new_df = df6.assign(difference = diff)
+    
+    #grid = 'gedi_' + new_df['Grid']
+    #out_df = new_df.assign(Gedi_Grid = grid)
+    #out_df.to_csv(csv_out)
+    
+    fig, ax = plt.subplots()
+    ax.scatter(x, y, s=10)
+    ax.plot(z,z, color='red')
+    #ax.set_xlim([0,0.1])
+    #ax.set_ylim([0,0.1])
+    ax.set_title('gedi raw data v 1km aggregate')
+    ax.set_ylabel('1km aggregate' + ' cd values')
+    ax.set_xlabel('glas raw data' + ' cd values')
+    plt.savefig(fig_out)
+    plt.close
 
 #Random code
 high_cd = df[df['mean_cd_g']>=0.6] 
@@ -346,4 +423,19 @@ ax.set_xlabel('GEDI mean cd values')
 plt.savefig(figout)
 plt.close
         
-        
+          x= df6['mean_cd_g']
+          y= df6['mean_cd_glas']
+          z=[0, 0.05, 1]
+
+          
+          fig, ax = plt.subplots()
+          ax.scatter(x, y, s=10)
+          ax.plot(z,z, color='red')
+          #ax.set_xlim([0,0.1])
+          #ax.set_ylim([0,0.1])
+          #ax.axis('equal')
+          ax.set_title('GEDI v ICESat')
+          ax.set_ylabel('ICESat cd values')
+          ax.set_xlabel('GEDI cd values')
+          plt.savefig(fileout)
+          plt.close  
