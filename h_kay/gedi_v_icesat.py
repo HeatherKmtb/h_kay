@@ -347,10 +347,14 @@ def compare_1km(gediin, figs_out):
              
         """     
   
-    gdf = pd.read_csv(gediin)
+    gdf = pd.read_csv(glasin)
     kmdf = pd.read_csv(kmin) 
-    
-   
+
+#option 1 - col renaming
+    grid = 'gedi_' + gdf['Grid'].astype(str)  
+    gdf= gdf.assign(Grid=grid)
+
+#option 2 - col renaming
     cols = ['qout_gedi', 'deg_free_g', 'mse_g', 'mean_h_g',
            'mean_cd_g']
     
@@ -366,24 +370,26 @@ def compare_1km(gediin, figs_out):
         grid.append(name)
         
     kmdf['Grid']=grid
+    
+#this after options  
 
     
     res = gdf.merge(kmdf, how='inner', on='Grid')
-    df1 = res['qout_gedi'] = res.qout_gedi.astype(str)
+    df1 = res['qout'] = res.qout.astype(str)
     df2 = df1.str.strip('[]').astype(float)
     df3 = res.assign(q_gedi = df2)
-    df4 = df3['qout_gedi_km'] = df3.qout_gedi_km.astype(str)
+    df4 = df3['qout_gedi'] = df3.qout_gedi.astype(str)
     df5 = df4.str.strip('[]').astype(float)
     df6 = df3.assign(q_km = df5)    
+    y= df6['mean_cd']
     x= df6['mean_cd_g']
-    y= df6['mean_cd_g_km']
     z=[0, 0.05, 1]
     
     diff = x - y
     
     #df7 = df6[df6['deg_free_g_x']>=100] 
     #df8 = df7[df7['deg_free_g_y']>=100] 
-    new_df = df6.assign(difference = diff)
+    new_df = df6.assign(difference_cd = diff)
     
     #grid = 'gedi_' + new_df['Grid']
     #out_df = new_df.assign(Gedi_Grid = grid)
@@ -394,48 +400,213 @@ def compare_1km(gediin, figs_out):
     ax.plot(z,z, color='red')
     #ax.set_xlim([0,0.1])
     #ax.set_ylim([0,0.1])
-    ax.set_title('gedi raw data v 1km aggregate')
-    ax.set_ylabel('1km aggregate' + ' cd values')
-    ax.set_xlabel('glas raw data' + ' cd values')
+    ax.set_title('gedi raw data v 5km aggregate')
+    ax.set_xlabel('5km aggregate' + ' cd values')
+    ax.set_ylabel('glas raw data' + ' cd values')
     plt.savefig(fig_out)
     plt.close
+    
+#plot q    
+    y= df6['q_gedi']#glas data
+    x= df6['q_km']
+    z=[0, 0.05, 0.1]
+    
+    diff2 = x - y
+    new_df2 = new_df.assign(difference_q = diff2)
+    
+    fig, ax = plt.subplots()
+    ax.scatter(x, y, s=10)
+    ax.plot(z,z, color='red')
+    #ax.set_xlim([0,0.1])
+    #ax.set_ylim([0,0.1])
+    ax.set_title('gedi raw data v 5km aggregate')
+    ax.set_xlabel('5km aggregate' + ' q values')
+    ax.set_label('glas raw data' + ' q values')
+    plt.savefig(fig_out_q)
+    plt.close    
 
-#Random code
-high_cd = df[df['mean_cd_g']>=0.6] 
-low_cd = df[df['mean_cd_g']<0.5] 
-
-x= high_cd['mean_cd_g']
-y= high_cd['mean_cd']
-z=[0, 1]
-
-
-fig, ax = plt.subplots()
-ax.scatter(x, y, s=10)
-ax.plot(z,z, color='red')
-ax.set_xlim([0,1])
-ax.set_ylim([0,1])
-
-m, b = np.polyfit(x, y, 1)
-plt.plot(x, m*x+b, color='black')
-ax.set_title('mean cd values ICEsat v GEDI 2020 Q3')
-ax.set_ylabel('ICESat mean cd values')
-ax.set_xlabel('GEDI mean cd values')
-plt.savefig(figout)
-plt.close
+def compare_new_cd(gediin, glasin, figs_out):
+        """
+        A function which prepares 2 of the results dataframes, and produces a new
+        combined csv and a figure comparing q values.
         
-          x= df6['mean_cd_g']
-          y= df6['mean_cd_glas']
-          z=[0, 0.05, 1]
+        Parameters
+        ----------
+        
+        gediin: string
+                 path to input csv file with gedi data already joined with 
+                 compare_gedis above
+                       
+        figs_out: string
+               path for folder to save figure with cd data
+               
+             
+        """     
+  
+    gdf = pd.read_csv(gediin)
+    df2 = pd.read_csv(glasin) 
+    
+    new_id = 'gedi_' + gdf['Grid'].astype(str) + '_' + gdf['eco'].astype(str)
+    gdf = gdf.assign(poly_id = new_id)
+
+    del new_id
+    
+    new_id = 'gedi_' + df2['Grid'].astype(str) + '_' + df2['eco'].astype(str)
+    df2 = df2.assign(poly_id = new_id)
+    
+    
+    df6 = gdf.merge(df2, how='inner', on='poly_id')
+    
+    x= df6['mean_cd_g']
+    y= df6['mean_cd_glas']
+    z=[0, 0.05, 1]
+    
+    diff = x - y
+    
+    #df7 = df6[df6['deg_free_g_x']>=100] 
+    #df8 = df7[df7['deg_free_g_y']>=100] 
+    new_df = df6.assign(difference = diff)
 
           
-          fig, ax = plt.subplots()
-          ax.scatter(x, y, s=10)
-          ax.plot(z,z, color='red')
-          #ax.set_xlim([0,0.1])
+    fig, ax = plt.subplots()
+    ax.scatter(x, y, s=10)
+    ax.plot(z,z, color='red')
+       #ax.set_xlim([0,0.1])
           #ax.set_ylim([0,0.1])
           #ax.axis('equal')
-          ax.set_title('GEDI v ICESat')
-          ax.set_ylabel('ICESat cd values')
-          ax.set_xlabel('GEDI cd values')
-          plt.savefig(fileout)
-          plt.close  
+    ax.set_title('GEDI adjusted cd values v GLAS cd values')
+    ax.set_ylabel('ICESat cd values')
+    ax.set_xlabel('GEDI adjusted cd values')
+    plt.savefig(fileout)
+    plt.close  
+    
+         
+          
+def compare_1to5km(gediin, figs_out):
+        """
+        A function which prepares 2 of the results dataframes, and produces a new
+        combined csv and a figure comparing q values.
+        
+        Parameters
+        ----------
+        
+        gediin: string
+                 path to input csv file with gedi data already joined with 
+                 compare_gedis above
+                       
+        figs_out: string
+               path for folder to save figure with cd data
+               
+             
+        """     
+  
+    onekmdf = pd.read_csv(onekmin)
+    fivekmdf = pd.read_csv(kmin) 
+
+#option 1 - col renaming
+    grid = 'gedi_' + gdf['Grid'].astype(str)  
+    gdf= gdf.assign(Grid=grid)
+
+#option 2 - col renaming
+    cols = ['qout_gedi', 'deg_free_g', 'mse_g', 'mean_h_g',
+           'mean_cd_g']
+    
+    for col in cols:
+        fivekmdf = fivekmdf.rename(columns={col:col + '_5km'})
+ 
+    name_comp = kmdf['Grid']
+
+    grid=[]
+    for i in name_comp: 
+        join = i.split('_')
+        name = join[1] 
+        grid.append(name)
+        
+    kmdf['Grid']=grid
+    
+#this after options  
+
+    
+    res = onekmdf.merge(fivekmdf, how='inner', on='Grid')
+    df1 = res['qout_gedi'] = res.qout_gedi.astype(str)
+    df2 = df1.str.strip('[]').astype(float)
+    df3 = res.assign(q_1km = df2)
+    df4 = df3['qout_gedi_5km'] = df3.qout_gedi_5km.astype(str)
+    df5 = df4.str.strip('[]').astype(float)
+    df6 = df3.assign(q_5km = df5)    
+    y= df6['mean_cd_g']
+    x= df6['mean_cd_g_5km']
+    z=[0, 0.05, 1]
+    
+    diff = x - y
+    
+    #df7 = df6[df6['deg_free_g_x']>=100] 
+    #df8 = df7[df7['deg_free_g_y']>=100] 
+    new_df = df6.assign(difference_cd = diff)
+    
+    #grid = 'gedi_' + new_df['Grid']
+    #out_df = new_df.assign(Gedi_Grid = grid)
+    #out_df.to_csv(csv_out)
+    
+    fig, ax = plt.subplots()
+    ax.scatter(x, y, s=10)
+    ax.plot(z,z, color='red')
+    #ax.set_xlim([0,0.1])
+    #ax.set_ylim([0,0.1])
+    ax.set_title('gedi 1km aggregate v 5km aggregate')
+    ax.set_xlabel('5km aggregate' + ' cd values')
+    ax.set_ylabel('1km aggregate' + ' cd values')
+    plt.savefig(fig_out_kms)
+    plt.close
+    
+#plot q    
+    y= df6['q_gedi']#glas data
+    x= df6['q_km']
+    z=[0, 0.05, 0.1]
+    
+    diff2 = x - y
+    new_df2 = new_df.assign(difference_q = diff2)
+    
+    fig, ax = plt.subplots()
+    ax.scatter(x, y, s=10)
+    ax.plot(z,z, color='red')
+    #ax.set_xlim([0,0.1])
+    #ax.set_ylim([0,0.1])
+    ax.set_title('gedi raw data v 5km aggregate')
+    ax.set_xlabel('5km aggregate' + ' q values')
+    ax.set_label('glas raw data' + ' q values')
+    plt.savefig(fig_out_q)
+    plt.close     
+
+#add original gedi
+    gdf = pd.read_csv(gediin)   
+    
+    grid = 'gedi_' + gdf['Grid'].astype(str)  
+    gdf= gdf.assign(Grid=grid)
+    
+    res = gdf.merge(fivekmdf, how='inner', on='Grid')
+    df1 = res['qout_gedi'] = res.qout_gedi.astype(str)
+    df2 = df1.str.strip('[]').astype(float)
+    df3 = res.assign(q_1km = df2)
+    df4 = df3['qout_gedi_5km'] = df3.qout_gedi_5km.astype(str)
+    df5 = df4.str.strip('[]').astype(float)
+    df6 = df3.assign(q_5km = df5)    
+    y= df6['mean_cd_g']
+    x= df6['mean_cd_g_5km']
+    z=[0, 0.05, 1]
+
+    
+    fig, ax = plt.subplots()
+    ax.scatter(x, y, s=10)
+    ax.plot(z,z, color='red')
+    #ax.set_xlim([0,0.1])
+    #ax.set_ylim([0,0.1])
+    ax.set_title('gedi original cd values v 5km aggregate')
+    ax.set_xlabel('5km aggregate' + ' cd values')
+    ax.set_ylabel('original gedi' + ' cd values')
+    plt.savefig(fig_out_gedi)
+    plt.close    
+    
+    
+    
+    

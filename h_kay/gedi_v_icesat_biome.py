@@ -16,6 +16,9 @@ from math import sqrt
 import pandas
 
 
+import mpl_scatter_density
+
+
 join2 = geopandas.read_file('/home/heather/q_res/join_glas_gedi_q.gpkg')
 
 gedi = join2['wwf_grid_id_q'].astype(float)
@@ -157,3 +160,129 @@ for biome in biomes:
     results = pandas.concat([results, res.to_frame().T], ignore_index=True)
 
     results.to_csv('/home/heather/q_res/results/gedi_eco/biomes/mse/stats.csv')
+
+
+
+
+
+
+
+#cd comparison code
+
+file = '/Users/heatherkay/q_res/gedi/results/comparison_23.06.13/difference.csv'
+df = pandas.read_csv(file)
+eco = df['eco_x']
+
+biome = []
+realm = []
+
+for i in eco:
+    n = list(str(i))
+    b = n[1:3] 
+    b2 = ''.join(b)
+    r = n[0]
+    biome.append(b2)
+    realm.append(r)
+    
+df['realm'] = realm
+df['biome'] = biome    
+
+
+z=[0, 0.5, 1]
+
+biomes = list(np.unique(df['biome']))
+
+for biome in biomes:
+    dfb = df.loc[df['biome']==biome] 
+    dfb.dropna()
+
+    gedi = dfb['mean_cd_g'].astype(float)
+    glas = dfb['mean_cd_glas'].astype(float)
+    fileout = ('/Users/heatherkay/q_res/gedi/results/comparison_23.06.13/biomes_cd/{}.png'.format(biome))
+
+    fig, ax = plt.subplots()
+    a, b = np.polyfit(gedi, glas, 1)
+
+    plt.plot(gedi, a*gedi+b, color='black')
+    ax.scatter(gedi, glas, s=10)
+    ax.plot(z,z, color='red')
+    #ax.set_xlim(-5, 10)
+    #ax.set_ylim(-5, 10)
+    ax.set_title('GEDI v ICESat mean cd values in biome {}'.format(biome))
+    ax.set_ylabel('ICESat cd values')
+    ax.set_xlabel('GEDI cd values')
+    fig.savefig(fileout)
+    plt.close
+
+realms = list(np.unique(df['realm']))
+
+for realm in realms:
+    dfb = df.loc[df['realm']==realm] 
+    dfb.dropna()
+
+    gedi = dfb['mean_cd_g'].astype(float)
+    glas = dfb['mean_cd_glas'].astype(float)
+    fileout = ('/Users/heatherkay/q_res/gedi/results/comparison_23.06.13/realms_cd/{}.png'.format(realm))
+
+    fig, ax = plt.subplots()
+    a, b = np.polyfit(gedi, glas, 1)
+
+    plt.plot(gedi, a*gedi+b, color='black')
+    ax.scatter(gedi, glas, s=10)
+    ax.plot(z,z, color='red')
+    #ax.set_xlim(-5, 10)
+    #ax.set_ylim(-5, 10)
+    ax.set_title('GEDI v ICESat mean cd values in biome {}'.format(realm))
+    ax.set_ylabel('ICESat cd values')
+    ax.set_xlabel('GEDI cd values')
+    fig.savefig(fileout)
+    plt.close
+
+for realm in realms:
+    dfr = df.loc[df['realm']==realm] 
+    
+    for biome in biomes:
+        dfb = dfr.loc[dfr['biome']==biome] 
+        dfb.dropna()
+        
+        if dfb.empty:
+            continue
+
+        gedi = dfb['mean_cd_g'].astype(float)
+        glas = dfb['mean_cd_glas'].astype(float)
+        fileout = ('/Users/heatherkay/q_res/gedi/results/comparison_23.06.13/realms_cd/{}_{}.png'.format(realm, biome))
+
+        fig, ax = plt.subplots()
+        a, b = np.polyfit(gedi, glas, 1)
+
+        plt.plot(gedi, a*gedi+b, color='black')
+        ax.scatter(gedi, glas, s=10)
+        ax.plot(z,z, color='red')
+    #ax.set_xlim(-5, 10)
+    #ax.set_ylim(-5, 10)
+        ax.set_title('GEDI v ICESat mean cd values in biome {} within realm {}'.format(biome, realm))
+        ax.set_ylabel('ICESat cd values')
+        ax.set_xlabel('GEDI cd values')
+        fig.savefig(fileout)
+        plt.close
+
+
+#mpl-scatter-density
+for biome in biomes:
+    dfb = df.loc[df['biome']==biome] 
+    dfb.dropna()
+
+    gedi = dfb['mean_cd_g'].astype(float)
+    glas = dfb['mean_cd_glas'].astype(float)
+    fileout = ('/Users/heatherkay/q_res/gedi/results/comparison_23.06.13/biomes_cd/{}.png'.format(biome))
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1, projection='scatter_density')
+    ax.scatter_density(gedi, glas)
+    #ax.set_xlim(-5, 10)
+    #ax.set_ylim(-5, 10)
+    ax.set_title('GEDI v ICESat mean cd values in biome {}'.format(biome))
+    ax.set_ylabel('ICESat cd values')
+    ax.set_xlabel('GEDI cd values')
+    fig.savefig(fileout)
+    plt.close
