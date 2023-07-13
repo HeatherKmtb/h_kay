@@ -11,15 +11,18 @@ import pandas as pd
 from statistics import mean, stdev
 from math import sqrt
 
-gediin = '/Users/heatherkay/q_res/gedi/all_gedi.csv'
-glasin = '/Users/heatherkay/q_res/icesat_glas/results_1deg_22.11.18.csv'
+gediin = '/home/heather/q_res/results/all_gedi.csv'
+glasin = '/home/heather/q_res/results/glas_23/icesat_results_1deg_23.02.28.csv'
 
 gdf=pd.read_csv(gediin)
 idf=pd.read_csv(glasin)
 
+grid = idf['ID']
+idf = idf.assign(Grid=grid)
+
 res = gdf.merge(idf, how='inner', on='Grid')
-gcd = res['mean_cd_g']
-icd = res['mean_cd']
+gcd = res['mean_h_g']
+icd = res['mean_h']
 
 
 ttest = st.ttest_ind(a=gcd, b=icd, equal_var=True)
@@ -29,3 +32,8 @@ print(cohens_d)
 
 #pearsons r
 st.pearsonr(gcd,icd)
+
+import matplotlib.pyplot as plt
+
+plt.hist(gcd, bins = 50)
+plt.hist(icd, bins = 50)
